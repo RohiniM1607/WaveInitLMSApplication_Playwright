@@ -1,0 +1,23 @@
+{
+  "name": "playwright_waveinitlms_application",
+  "version": "1.0.0",
+  "description": "Waveinit LMS\r     Waveinit LMS is a Learning Management System (LMS) application designed to help trainers manage learning content and participants access and complete their training.",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RohiniM1607/WaveInitLMSApplication_Playwright.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/RohiniM1607/WaveInitLMSApplication_Playwright/issues"
+  },
+  "homepage": "https://github.com/RohiniM1607/WaveInitLMSApplication_Playwright#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.2.0"
+  }
+}
