@@ -15,13 +15,8 @@ module.exports = {
             snippetInterface: "async-await"
         },
 
-        
         format: [
-        "allure-cucumberjs/reporter",
-        "json:reports/cucumber-report.json",
-        "html:reports/cucumber-report.html",
-        "junit:reports/junit-report.xml",
-        "rerun:rerun/@rerun.txt"
+        "summary",
     ],
         parallel: 1
     },
