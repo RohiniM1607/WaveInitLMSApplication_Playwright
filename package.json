@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "csv-parse": "^7.0.1",
+    "csv-parse": "^7.0.2",
     "dotenv": "^17.4.2",
     "playwright": "^1.61.1",
     "xlsx": "^0.18.5"
@@ -8,11 +8,11 @@
   "devDependencies": {
     "@cucumber/cucumber": "^12.9.0",
     "@faker-js/faker": "^10.5.0",
-    "@playwright/test": "^1.61.1",
-    "@types/node": "^26.1.0",
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.2.0",
     "allure-cucumberjs": "^3.10.2",
     "cross-env": "^10.1.0",
-    "multiple-cucumber-html-reporter": "^4.1.0",
+    "multiple-cucumber-html-reporter": "^4.3.0",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3",
     "winston": "^3.19.0"
