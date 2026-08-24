@@ -1,3 +1,4 @@
+@vignesh
 Feature: VIGNESHWARAN 24th August 2026
   As a user, I want to login to the application, so that I can access my account and perform necessary actions.
 
@@ -9,7 +10,7 @@ Feature: VIGNESHWARAN 24th August 2026
     And The user clicks on the login button
     Then The the dashboard header should be displayed with the text "Welcome back"
 
-  @vignesh
+  
   Scenario Outline: Application should display proper error message on invalid login
     When The user enters the "<testcase>" username and password
     And The user clicks on the login button
