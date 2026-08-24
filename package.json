@@ -1,23 +1,32 @@
 {
-  "name": "playwright_waveinitlms_application",
-  "version": "1.0.0",
-  "description": "Waveinit LMS\r     Waveinit LMS is a Learning Management System (LMS) application designed to help trainers manage learning content and participants access and complete their training.",
-  "main": "index.js",
-  "scripts": {},
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/RohiniM1607/WaveInitLMSApplication_Playwright.git"
+  "dependencies": {
+    "csv-parse": "^7.0.1",
+    "dotenv": "^17.4.2",
+    "playwright": "^1.61.1",
+    "xlsx": "^0.18.5"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/RohiniM1607/WaveInitLMSApplication_Playwright/issues"
-  },
-  "homepage": "https://github.com/RohiniM1607/WaveInitLMSApplication_Playwright#readme",
   "devDependencies": {
-    "@playwright/test": "^1.62.1",
-    "@types/node": "^26.2.0"
+    "@cucumber/cucumber": "^12.9.0",
+    "@faker-js/faker": "^10.5.0",
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^26.1.0",
+    "allure-cucumberjs": "^3.10.2",
+    "cross-env": "^10.1.0",
+    "multiple-cucumber-html-reporter": "^4.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3",
+    "winston": "^3.19.0"
+  },
+  "scripts": {
+    "test": "cucumber-js",
+    "CourseFilter": "cucumber-js --tags @CourseFilter",
+    "posttest": "npx ts-node src/main/utils/report.mts",
+    "sowndariya": "cucumber-js  --tags @sowndariya",
+    "Samiha": "cucumber-js --tags @Samiha",
+    "vignesh": "cucumber-js --tags @vignesh",
+    "Rohini": "cucumber-js  --tags @Rohini",
+    "bala": "cucumber-js  --tags @bala",
+    "parallel": "cucumber-js  --parallel 2",
+    "test:failed": "cucumber-js -p rerun rerun/@rerun.txt"
   }
 }
