@@ -9,8 +9,8 @@ Feature: BALAMURUGAN 25th August 2026 - Create Quiz Manually
     Given The user launches the application
     When The user clicks the "Trainer" login button
     And The user enters valid username and password
-    And The user clicks on the login button
-    Then The the dashboard header should be displayed with the text "Welcome back"
+    And The user clicks the login button
+    Then The dashboard header should be displayed with the text "Welcome back"
     When The trainer clicks on the "My Trainings" menu
     And The trainer selects the course from the list
     And The trainer clicks on the "AI Quiz" tab
