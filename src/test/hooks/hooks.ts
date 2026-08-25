@@ -1,4 +1,4 @@
-import { Before, After, BeforeAll, AfterAll } from '@cucumber/cucumber';
+import { Before, After, BeforeAll, AfterAll, setDefaultTimeout } from '@cucumber/cucumber';
 import { chromium, Browser, firefox, webkit } from '@playwright/test';
 import { CustomWorld } from '../../main/support/CustomWorld';
 import { config } from '../../main/config/config';
@@ -6,8 +6,11 @@ import { logger } from '../../main/utils/logger';
 import { LoginPage } from '../pages/LoginPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { DiscussionPage } from '../pages/DiscussionPage';
+import { CodingPage } from '../pages/Coding/CodingPage';
 
 let browser: Browser;
+setDefaultTimeout(30 * 1000);
+
 BeforeAll({ timeout: 30 * 1000 }, async () => {
     try {
         if (config.browser === "chromium") {
@@ -44,12 +47,14 @@ BeforeAll({ timeout: 30 * 1000 }, async () => {
 });
 
 Before(async function (this: CustomWorld, scenario) {
+    
     this.browser = browser;
     this.context = await this.browser.newContext();
     this.page = await this.context.newPage();
     this.loginPage = new LoginPage(this.page);
     this.dashboardPage = new DashboardPage(this.page);
     this.discussionPage = new DiscussionPage(this.page);
+    this.codingPage = new CodingPage(this.page);
 });
 
 After(async function (this: CustomWorld, scenario) {

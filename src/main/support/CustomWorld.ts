@@ -3,6 +3,7 @@ import { BrowserContext, Browser, Page } from "@playwright/test";
 import { World, setWorldConstructor } from "@cucumber/cucumber";
 import { LoginPage } from "../../test/pages/LoginPage";
 import { DiscussionPage } from "../../test/pages/DiscussionPage";
+import { CodingPage } from '../../test/pages/Coding/CodingPage';
 
 export class CustomWorld extends World {
     browser!: Browser;
@@ -12,6 +13,7 @@ export class CustomWorld extends World {
     dashboardPage!: DashboardPage;
     discussionPage!: DiscussionPage;
     lastPostedMessage!: string;
+    codingPage!: CodingPage;
 }
 
 setWorldConstructor(CustomWorld);
