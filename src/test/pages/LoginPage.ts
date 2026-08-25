@@ -7,6 +7,7 @@ export class LoginPage extends BasePage {
     private passwordInput = this.page.locator('#login-password');
     private loginButton = this.page.locator('//button[@class =  "auth-submit-btn"]');   
     private errorMessage = this.page.locator('//div[text()="Invalid email or password"]');
+    private signUpLink = this.page.locator('//a[text() = "Sign up as Participant"]');
 
     async clickLogin(role: string) {
         logger.info(`Clicking on the ${role} login button`);
@@ -62,5 +63,10 @@ export class LoginPage extends BasePage {
             logger.error(`Validation check failed: ${error}`);
             throw error;
         }
+    }
+
+    async clickSignUpLink() {
+        logger.info("Clicking on the Sign Up link");
+        await this.click(this.signUpLink);
     }
 }   
