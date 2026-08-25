@@ -1,5 +1,5 @@
-@vignesh
-Feature: Login
+@vignesh @login
+Feature: VIGNESHWARAN_M 24-08-2026 Login Feature
   As a user,
   I want to log in to the application,
   So that I can access my account and perform necessary actions.
@@ -15,6 +15,7 @@ Feature: Login
 
     Examples:
       | role    |
+      | Admin   |
       | Trainer |
       | Learner |
 
@@ -26,6 +27,7 @@ Feature: Login
 
     Examples:
       | role    |
+      | Admin   |
       | Trainer |
       | Learner |
 
@@ -37,5 +39,6 @@ Feature: Login
 
     Examples:
       | role    |
+      | Admin   |
       | Trainer |
       | Learner |

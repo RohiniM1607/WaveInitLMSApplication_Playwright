@@ -1,0 +1,27 @@
+{
+  "operators": {
+    "quizTitle": "operators",
+    "questions": [
+      {
+        "questionText": "What does the '+' operator do?",
+        "options": ["Adds values", "Subtracts values", "Multiplies values", "Divides values"],
+        "correctAnswer": "Adds values"
+      },
+      {
+        "questionText": "Which operator checks equality?",
+        "options": ["=", "==", "===", "!="],
+        "correctAnswer": "=="
+      },
+      {
+        "questionText": "What is the result of 5 % 2?",
+        "options": ["2", "1", "0", "2.5"],
+        "correctAnswer": "1"
+      },
+      {
+        "questionText": "Which operator is used for exponents?",
+        "options": ["^", "**", "//", "%%"],
+        "correctAnswer": "**"
+      }
+    ]
+  }
+}
