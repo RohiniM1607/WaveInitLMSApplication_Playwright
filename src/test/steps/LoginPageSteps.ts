@@ -15,33 +15,11 @@ When('The user enters valid username and password', async function (this: Custom
     await this.loginPage.fillPassword(testData.password);
 });
               
-When('The user clicks on the login button', async function (this: CustomWorld) {
+When('The user clicks the login button', async function (this: CustomWorld) {
     await this.loginPage.clickLoginButton();
 });
-              
-              
-When('The user enters the {string} username and password', async function (this: CustomWorld, testcase : string) {
-    const testData = loginData[`${testcase}Credentials` as keyof typeof loginData];
-    await this.loginPage.fillUsername(testData.username);
-    await this.loginPage.fillPassword(testData.password);
-});
        
-Then('The application should display the {string}', async function (this: CustomWorld, expectedMessage: string) {
-    
-    if(expectedMessage === "Validation message") { 
-        const validity = await this.loginPage.verifyValidity();
-        expect(validity.isNameValid).toBe(false);
-        expect(validity.isDescriptionValid).toBe(false);
-    }
-    else{
-        const actualMessage = await this.loginPage.getErrorMessage();
-        expect(actualMessage).toBe(expectedMessage);    
-    }
-    
-});
-
-
-Then('The the dashboard header should be displayed with the text {string}', async function(this: CustomWorld, expectedText: string)  {
+Then('The dashboard header should be displayed with the text {string}', async function(this: CustomWorld, expectedText: string)  {
     const actualText = await this.dashboardPage.getDashboardHeaderText();
     expect(actualText?.startsWith(expectedText)).toBe(true);
 })
@@ -49,4 +27,26 @@ Then('The the dashboard header should be displayed with the text {string}', asyn
 When('The user clicks the {string} login button', async function (this: CustomWorld, role: string)  {
     selectedRole = role;
     await this.loginPage.clickLogin(role);
+})
+
+When('The user leaves the username and password fields empty', async function (this: CustomWorld)  {
+    await this.loginPage.fillUsername("");
+    await this.loginPage.fillPassword("");
+})
+
+Then('The username and password fields should display validation errors', async function (this: CustomWorld)  {
+    const validity = await this.loginPage.verifyValidity();
+    expect(validity.isNameValid).toBe(false);
+    expect(validity.isDescriptionValid).toBe(false);
+})
+
+Then('The application should display the error message {string}', async function (this: CustomWorld, expectedMessage: string)  {
+    const actualMessage = await this.loginPage.getErrorMessage();
+    expect(actualMessage).toBe(expectedMessage);
+})
+
+When('The user enters invalid username and password', async function (this: CustomWorld)  {
+    const testData = loginData[`invalidCredentials` as keyof typeof loginData];
+    await this.loginPage.fillUsername(testData.username);
+    await this.loginPage.fillPassword(testData.password);
 })
