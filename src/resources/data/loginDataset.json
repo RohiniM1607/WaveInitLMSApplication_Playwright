@@ -1,16 +1,21 @@
 {
-    "valid" : {
-        "username": "testingteam5@gmail.com",
-        "password": "test5@123"
-    },
+  "validLearner": {
+    "username": "testingteam5@gmail.com",
+    "password": "test5@123"
+  },
 
-    "invalid" : {
-        "username": "invalid_username",
-        "password": "invalid_password"
-    },
+  "validTrainer": {
+    "username": "ashok@gmail.com",
+    "password": "ashok5@321"
+  },
 
-    "empty" : {
-        "username": "",
-        "password": ""
-    } 
+  "invalidCredentials": {
+    "username": "invalid_username",
+    "password": "invalid_password"
+  },
+
+  "emptyCredentials": {
+    "username": "",
+    "password": ""
+  }
 }
