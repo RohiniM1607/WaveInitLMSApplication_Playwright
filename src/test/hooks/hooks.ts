@@ -5,6 +5,7 @@ import { config } from '../../main/config/config';
 import { logger } from '../../main/utils/logger';
 import { LoginPage } from '../pages/LoginPage';
 import { DashboardPage } from '../pages/DashboardPage';
+import { DiscussionPage } from '../pages/DiscussionPage';
 
 let browser: Browser;
 BeforeAll({ timeout: 30 * 1000 }, async () => {
@@ -48,6 +49,7 @@ Before(async function (this: CustomWorld, scenario) {
     this.page = await this.context.newPage();
     this.loginPage = new LoginPage(this.page);
     this.dashboardPage = new DashboardPage(this.page);
+    this.discussionPage = new DiscussionPage(this.page);
 });
 
 After(async function (this: CustomWorld, scenario) {
