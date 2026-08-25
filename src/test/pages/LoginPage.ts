@@ -8,6 +8,12 @@ export class LoginPage extends BasePage {
     private loginButton = this.page.locator('//button[@class =  "auth-submit-btn"]');   
     private errorMessage = this.page.locator('//div[text()="Invalid email or password"]');
 
+    async clickLogin(role: string) {
+        logger.info(`Clicking on the ${role} login button`);
+        const xpath = `//button[contains(@class , "auth-role-btn")]/span[text() = "${role}"]`;
+        await this.click(this.page.locator(xpath));
+    }
+
     async fillUsername(username: string) {
         logger.info(`Filling username: ${username}`);
         await this.fill(this.usernameInput, username);
