@@ -7,11 +7,14 @@ import { LoginPage } from '../pages/LoginPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { QuizPage } from '../pages/QuizPage';
 import { DiscussionPage } from '../pages/DiscussionPage';
+import { CodingPage } from '../pages/Coding/CodingPage';
 import { SignUpPage } from '../pages/SignUpPage';
 
 setDefaultTimeout(15000);
 
 let browser: Browser;
+setDefaultTimeout(30 * 1000);
+
 BeforeAll({ timeout: 30 * 1000 }, async () => {
     try {
         if (config.browser === "chromium") {
@@ -48,6 +51,7 @@ BeforeAll({ timeout: 30 * 1000 }, async () => {
 });
 
 Before(async function (this: CustomWorld, scenario) {
+    
     this.browser = browser;
     this.context = await this.browser.newContext();
     this.page = await this.context.newPage();
@@ -55,6 +59,7 @@ Before(async function (this: CustomWorld, scenario) {
     this.dashboardPage = new DashboardPage(this.page);
     this.quizPage = new QuizPage(this.page);
     this.discussionPage = new DiscussionPage(this.page);
+    this.codingPage = new CodingPage(this.page);
     this.signUpPage = new SignUpPage(this.page);
 });
 

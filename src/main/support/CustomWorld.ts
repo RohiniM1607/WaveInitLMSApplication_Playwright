@@ -4,6 +4,7 @@ import { World, setWorldConstructor } from "@cucumber/cucumber";
 import { LoginPage } from "../../test/pages/LoginPage";
 import { QuizPage } from "../../test/pages/QuizPage";
 import { DiscussionPage } from "../../test/pages/DiscussionPage";
+import { CodingPage } from '../../test/pages/Coding/CodingPage';
 import { SignUpPage } from '../../test/pages/SignUpPage';
 
 export class CustomWorld extends World {
@@ -17,6 +18,7 @@ export class CustomWorld extends World {
     currentQuizQuestionCount?: number;
     discussionPage!: DiscussionPage;
     lastPostedMessage!: string;
+    codingPage!: CodingPage;
     signUpPage!: SignUpPage;
 }
 
