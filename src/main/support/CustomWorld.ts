@@ -18,6 +18,7 @@ export class CustomWorld extends World {
     currentQuizQuestionCount?: number;
     discussionPage!: DiscussionPage;
     lastPostedMessage!: string;
+    lastPostedMessages!: string[];
     codingPage!: CodingPage;
     signUpPage!: SignUpPage;
 }
