@@ -4,23 +4,101 @@
     "questions": [
       {
         "questionText": "What does the '+' operator do?",
-        "options": ["Adds values", "Subtracts values", "Multiplies values", "Divides values"],
+        "options": [
+          "Adds values",
+          "Subtracts values",
+          "Multiplies values",
+          "Divides values"
+        ],
         "correctAnswer": "Adds values"
       },
       {
         "questionText": "Which operator checks equality?",
-        "options": ["=", "==", "===", "!="],
+        "options": [
+          "=",
+          "==",
+          "===",
+          "!="
+        ],
         "correctAnswer": "=="
+      }
+    ]
+  },
+
+  "variables": {
+    "quizTitle": "variables",
+    "questions": [
+      {
+        "questionText": "Which keyword is used to declare a variable that cannot be reassigned?",
+        "options": [
+          "var",
+          "let",
+          "const",
+          "static"
+        ],
+        "correctAnswer": "const"
       },
       {
-        "questionText": "What is the result of 5 % 2?",
-        "options": ["2", "1", "0", "2.5"],
-        "correctAnswer": "1"
+        "questionText": "Which keyword allows a variable to be reassigned?",
+        "options": [
+          "const",
+          "let",
+          "fixed",
+          "final"
+        ],
+        "correctAnswer": "let"
+      }
+    ]
+  },
+
+  "loops": {
+    "quizTitle": "loops",
+    "questions": [
+      {
+        "questionText": "Which loop is commonly used when the number of iterations is known?",
+        "options": [
+          "for",
+          "while",
+          "do while",
+          "switch"
+        ],
+        "correctAnswer": "for"
       },
       {
-        "questionText": "Which operator is used for exponents?",
-        "options": ["^", "**", "//", "%%"],
-        "correctAnswer": "**"
+        "questionText": "Which loop executes its body at least once?",
+        "options": [
+          "for",
+          "while",
+          "do while",
+          "foreach"
+        ],
+        "correctAnswer": "do while"
+      }
+    ]
+  },
+
+  "arrays": {
+    "quizTitle": "arrays",
+    "questions": [
+      {
+        "questionText": "Which property gives the number of elements in an array?",
+        "options": [
+          "size",
+          "count",
+          "length",
+          "elements"
+        ],
+        "correctAnswer": "length"
+      },
+      {
+        "questionText": "What is the index of the first element in a JavaScript array?",
+        "options": [
+          "0",
+          "1",
+          "-1",
+          "2"
+        ],
+        "correctAnswer": "0"
       }
     ]
   }

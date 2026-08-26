@@ -20,7 +20,7 @@ module.exports = {
         "json:reports/cucumber-report.json",
         "html:reports/cucumber-report.html",
         "junit:reports/junit-report.xml",
-        "rerun:rerun/@rerun.txt",
+        "rerun:rerun/@rerun.txt"
     ],
         parallel: 1
     },

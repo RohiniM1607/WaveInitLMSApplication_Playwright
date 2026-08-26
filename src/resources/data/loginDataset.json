@@ -1,4 +1,9 @@
 {
+  "validAdmin": {
+    "username": "admin@test.com",
+    "password": "admin123"
+  },
+
   "validLearner": {
     "username": "testingteam5@gmail.com",
     "password": "test5@123"
