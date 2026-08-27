@@ -1,4 +1,4 @@
-import { expect } from "playwright/test";
+import { expect, Locator } from "playwright/test";
 import { logger } from "../../main/utils/logger";
 import { BasePage } from "./BasePage";
 
@@ -115,6 +115,137 @@ export class DiscussionPage extends BasePage {
         const post = this.page.getByText(message, { exact: true }).first();
         try {
             await expect(post).toBeVisible({ timeout });
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Reply & Delete support
+    //
+    // Every post/reply is rendered as a repeating "card" that holds the
+    // message text plus its own Reply link and delete icon. To act on the
+    // Reply link or delete icon that belongs to a *specific* post/reply
+    // (not just the first one on the page), we first locate the exact
+    // message text (each message carries a unique timestamp suffix, so the
+    // text match is unambiguous) and then walk up to the nearest ancestor
+    // card that also contains a "Reply" link or a button/icon.
+    //
+    // If your app exposes data-testid attributes on the Reply link or the
+    // delete icon, prefer those over this XPath fallback - it will be far
+    // more robust than walking the DOM by structure.
+    // ---------------------------------------------------------------------
+    private getCard(message: string): Locator {
+        const messageLocator = this.page.getByText(message, { exact: true });
+        return messageLocator.locator(
+            'xpath=ancestor::*[self::div or self::li or self::article]' +
+            '[.//*[normalize-space(text())="Reply"] or .//button or .//svg][1]'
+        );
+    }
+
+    // Fix: the reply compose box observed in the app stays open after a reply is
+    // posted (it does not auto-close), ready for another reply. Clicking the
+    // "Reply" link again in that state toggles the box CLOSED instead of opening
+    // a fresh one. This method is idempotent: it only clicks "Reply" if the
+    // compose box for this post is not already open, so it is safe to call
+    // multiple times in a row (e.g. when posting two replies to the same post).
+    async clickReplyLink(message: string) {
+        const card = this.getCard(message);
+        const replyBox = card.getByPlaceholder('Write your reply...');
+        const isBoxAlreadyOpen = await replyBox.first().isVisible({ timeout: 2000 }).catch(() => false);
+
+        if (isBoxAlreadyOpen) {
+            logger.info(`Reply box is already open for message: ${message} - skipping the Reply link click`);
+            return;
+        }
+
+        logger.info(`Clicking the Reply link for message: ${message}`);
+        const replyLink = card.getByText('Reply', { exact: true }).first();
+        await this.click(replyLink);
+        await replyBox.first().waitFor({ state: 'visible', timeout: 10000 });
+    }
+
+    // Scoped to the specific post's card so it can't accidentally fill a reply
+    // box belonging to a different post on the page.
+    async enterReplyMessage(message: string, postMessage: string) {
+        logger.info(`Entering reply message: ${message}`);
+        const card = this.getCard(postMessage);
+        const replyBox = card.getByPlaceholder('Write your reply...').first();
+        await this.fill(replyBox, message);
+    }
+
+    // Scoped to the specific post's card for the same reason as enterReplyMessage.
+    async submitReply(postMessage: string) {
+        logger.info("Clicking the Post Reply button");
+        const card = this.getCard(postMessage);
+        const postReplyButton = card.getByText('Post Reply', { exact: true }).first();
+        await this.click(postReplyButton);
+        await this.page.waitForLoadState('networkidle').catch(() => { /* ignore if it never goes idle */ });
+    }
+
+    async clickDeleteIcon(message: string) {
+        logger.info(`Clicking the delete icon for message: ${message}`);
+        const card = this.getCard(message);
+
+        // Confirmed from the app's DOM: every post/reply's delete icon is rendered as
+        // <button title="Delete Post" class="cdb-btn-icon cdb-btn-icon--delete">
+        const deleteIcon = card.locator('button.cdb-btn-icon--delete').first();
+        if (await deleteIcon.count() > 0) {
+            await this.click(deleteIcon);
+            return;
+        }
+
+        // Fallback in case the class name ever changes
+        const namedDeleteButton = card.getByRole('button', { name: /delete/i }).first();
+        await this.click(namedDeleteButton);
+    }
+
+    async isDeleteConfirmationPopupVisible(timeout = 5000): Promise<boolean> {
+        // The modal has a heading AND a confirm button that both read exactly "Delete Post".
+        // getByText('Delete Post', { exact: true }) matches both, which trips Playwright's
+        // strict-mode check and throws - silently caught below as "not visible" even when
+        // the popup is genuinely open. Scoping to the heading role fixes the ambiguity.
+        const popupHeading = this.page.getByRole('heading', { name: 'Delete Post', exact: true });
+        try {
+            await expect(popupHeading).toBeVisible({ timeout });
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    // The modal's own container: the nearest ancestor of the "Delete Post" heading that
+    // also contains a button. Every delete icon on the page shares the accessible name
+    // "Delete Post" (its title attribute), so the confirm/cancel buttons must be scoped
+    // to inside the modal itself - otherwise getByRole('button', { name: 'Delete Post' })
+    // matches every delete icon on the page as well as the modal's own button.
+    private getDeleteModalContainer(): Locator {
+        const popupHeading = this.page.getByRole('heading', { name: 'Delete Post', exact: true });
+        return popupHeading.locator('xpath=ancestor::*[self::div][.//button][1]');
+    }
+
+    async confirmDeletePost() {
+        logger.info("Confirming delete in the Delete Post popup");
+        // Confirmed via Playwright recording: the confirm button's visible label is
+        // wrapped in its own <span>, which the delete icons don't have (they only carry
+        // a "title" attribute), so this is unique without needing extra scoping.
+        const confirmButton = this.page.locator('span:has-text("Delete Post")').last();
+        await this.click(confirmButton);
+    }
+
+    async cancelDeletePost() {
+        logger.info("Cancelling the Delete Post popup");
+        const modal = this.getDeleteModalContainer();
+        const cancelButton = modal.getByRole('button', { name: 'Cancel', exact: true });
+        await this.click(cancelButton);
+    }
+
+    async isDeleteSuccessMessageVisible(timeout = 10000): Promise<boolean> {
+        // Confirmed via Playwright recording: exact toast text, including the trailing period.
+        const toast = this.page.getByText('Post deleted successfully.', { exact: true });
+        try {
+            await expect(toast).toBeVisible({ timeout });
             return true;
         } catch {
             return false;
