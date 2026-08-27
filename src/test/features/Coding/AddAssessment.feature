@@ -10,4 +10,18 @@ Feature: Rohini_25Aug2026_Adding Coding Assessment
     When the trainer clicks on the Create Assessment button
     Then a new coding assessment should be added to the assessment list
 
-  
+  Scenario: Create assessment using Generate with AI option
+    Given the trainer is in the "Manual Testing" course
+    And the trainer is in the Coding module
+    When the trainer clicks on the Generate with AI button
+    And the trainer enters the assessment details
+    And the trainer clicks on the Generate Assessment button
+    Then a new coding assessment should be added to the assessment list
+
+  Scenario: Cancel assessment creation using Generate with AI option
+    Given the trainer is in the "Manual Testing" course
+    And the trainer is in the Coding module
+    When the trainer clicks on the Generate with AI button
+    And the trainer enters the assessment details
+    And the trainer clicks on the Cancel button
+    Then a new coding assessment should not be added to the assessment list
