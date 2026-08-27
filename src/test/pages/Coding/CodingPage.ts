@@ -8,8 +8,9 @@ export class CodingPage extends BasePage {
     private readonly createAssessmentButton =this.page.getByRole("button", {name: "Create Assessment"});
     private readonly generateWithAIButton =this.page.getByRole("button", {name: "Generate with AI"});
     private readonly untitledCodingAssessment = this.page.getByText("Untitled Coding Assessment",{ exact: true });
-    private readonly assessmentTable: Locator = this.page.locator("table.cct-table");
-    private readonly assessmentRows: Locator = this.page.locator("table.cct-table tbody tr");
+    private readonly assessmentTable = this.page.locator("table.cct-table");
+    private readonly assessmentRows = this.page.locator("table.cct-table tbody tr");
+    private readonly cancelButton = this.page.getByRole("button", {name: "Cancel", exact: true});
 
     async selectCourse(course: string) { 
         const courseItem = this.courseItem(course);
@@ -24,13 +25,13 @@ export class CodingPage extends BasePage {
     }
 
 
-    async clickCreateAssessment(){
+    async clickCreateAssessment() {
         await this.click(this.createAssessmentButton);
         logger.info("Clicked on create assessment button");
     }
 
 
-    async clickGenerateWithAI(){
+    async clickGenerateWithAI() {
         await this.click(this.generateWithAIButton);
         logger.info("Clicked on generate with AI button");
     }
@@ -45,7 +46,7 @@ export class CodingPage extends BasePage {
         return count;
     }
 
-    async verifyAssessmentAdded(previousCount: number): Promise<void> {
+    async verifyAssessmentAdded(previousCount: number) {
         await this.untitledCodingAssessment.nth(previousCount).waitFor({ state: "visible", timeout: 1000000});
         const currentCount = await this.getAssessmentCount();
         logger.info(`Previous assessment count: ${previousCount}`);
@@ -54,5 +55,20 @@ export class CodingPage extends BasePage {
             throw new Error( `Assessment was not added. ` + `Previous: ${previousCount}, ` + `Current: ${currentCount}`);
         }
         logger.info(`Assessment added successfully. ` + `Previous: ${previousCount}, Current: ${currentCount}`);
+    }
+
+    async clickCancel() {
+        await this.click(this.cancelButton);
+        logger.info("Clicked Cancel button");
+    }
+
+    async verifyAssessmentNotAdded(previousCount: number){
+        const currentCount = await this.getAssessmentCount();
+        logger.info(`Previous assessment count: ${previousCount}`);
+        logger.info(`Current assessment count: ${currentCount}`);
+        if (currentCount !== previousCount) {
+            throw new Error(`Assessment was added unexpectedly. ` +`Previous: ${previousCount}, ` +`Current: ${currentCount}`);
+        }
+        logger.info(`Verified that assessment was not added. ` +`Previous: ${previousCount}, Current: ${currentCount}`);
     }
 }
