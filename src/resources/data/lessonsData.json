@@ -1,0 +1,15 @@
+{
+  "course": {
+    "name": "Manual Testing"
+  },
+  "module": {
+    "valid": {
+      "moduleName": "Playwright Automation",
+      "description": "Introduction to Playwright Automation"
+    },
+    "invalid": {
+      "moduleName": "",
+      "description": ""
+    }
+  }
+}
