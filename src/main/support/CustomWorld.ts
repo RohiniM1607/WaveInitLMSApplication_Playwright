@@ -8,6 +8,7 @@ import { CodingPage } from '../../test/pages/Coding/CodingPage';
 import { SignUpPage } from '../../test/pages/SignUpPage';
 import { AssessmentPage } from '../../test/pages/Coding/AssessmentPage';
 
+import { LessonsPage } from '../../test/pages/Lessons/LessonsPage';
 export class CustomWorld extends World {
     browser!: Browser;
     context!: BrowserContext;
@@ -19,6 +20,9 @@ export class CustomWorld extends World {
     currentQuizQuestionCount?: number;
     discussionPage!: DiscussionPage;
     lastPostedMessage!: string;
+    lastPostedMessages!: string[];
+    replyMessages?: Record<string, string>;
+    lessonsPage!: LessonsPage;
     codingPage!: CodingPage;
     signUpPage!: SignUpPage;
     assessmentPage!: AssessmentPage;
