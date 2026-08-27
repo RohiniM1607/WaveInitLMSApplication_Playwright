@@ -16,11 +16,12 @@ module.exports = {
         },
 
         format: [
-        "allure-cucumberjs/reporter",
-        "json:reports/cucumber-report.json",
-        "html:reports/cucumber-report.html",
-        "junit:reports/junit-report.xml",
-        "rerun:rerun/@rerun.txt"
+        "summary",
+        // "allure-cucumberjs/reporter",
+        // "json:reports/cucumber-report.json",
+        // "html:reports/cucumber-report.html",
+        // "junit:reports/junit-report.xml",
+        // "rerun:rerun/@rerun.txt"
     ],
         parallel: 1
     },
