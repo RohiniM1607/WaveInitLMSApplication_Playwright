@@ -6,6 +6,7 @@ import { QuizPage } from "../../test/pages/QuizPage";
 import { DiscussionPage } from "../../test/pages/DiscussionPage";
 import { CodingPage } from '../../test/pages/Coding/CodingPage';
 import { SignUpPage } from '../../test/pages/SignUpPage';
+import { AssessmentPage } from '../../test/pages/Coding/AssessmentPage';
 
 export class CustomWorld extends World {
     browser!: Browser;
@@ -20,6 +21,7 @@ export class CustomWorld extends World {
     lastPostedMessage!: string;
     codingPage!: CodingPage;
     signUpPage!: SignUpPage;
+    assessmentPage!: AssessmentPage;
 }
 
 setWorldConstructor(CustomWorld);
