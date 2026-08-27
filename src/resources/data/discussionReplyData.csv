@@ -1,0 +1,5 @@
+postType,replyKey,message
+Normal Post,default,"Thanks for sharing this, it really helped me understand the topic better."
+Question,default,"Could you please elaborate a bit more on this question?"
+Normal Post,first,"This is the first reply and should remain visible after the delete test."
+Normal Post,second,"This is the second reply and will be deleted to verify delete functionality."
