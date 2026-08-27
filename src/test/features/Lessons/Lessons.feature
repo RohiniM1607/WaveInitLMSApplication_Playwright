@@ -28,9 +28,9 @@ Feature: SAMIHA_M 26-08-2026 Lessons Module
     When The trainer navigates to My Trainings
     And The trainer selects the course
     And The trainer clicks on the Lessons tab
-    And The trainer clicks on the "Add Module" button
+    And The trainer clicks the "Add Module" button in Lessons
     And The trainer enters valid module details
-    And The trainer clicks on the "Save" button
+    And The trainer clicks the "Save" button in Lessons
     Then The newly created module should be displayed in the Learning Content section
 
 
@@ -39,8 +39,8 @@ Feature: SAMIHA_M 26-08-2026 Lessons Module
     When The trainer navigates to My Trainings
     And The trainer selects the course
     And The trainer clicks on the Lessons tab
-    And The trainer clicks on the "Add Module" button
+    And The trainer clicks the "Add Module" button in Lessons
     And The trainer leaves the mandatory module fields empty
-    And The trainer clicks on the "Save" button
+    And The trainer clicks the "Save" button in Lessons
     Then The module validation message should be displayed
     And The module should not be created
