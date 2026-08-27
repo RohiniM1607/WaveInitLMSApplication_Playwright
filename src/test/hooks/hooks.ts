@@ -10,6 +10,7 @@ import { DiscussionPage } from '../pages/DiscussionPage';
 import { CodingPage } from '../pages/Coding/CodingPage';
 import { SignUpPage } from '../pages/SignUpPage';
 import { SidebarPage } from '../pages/SidebarPage';
+import { LessonsPage } from '../../test/pages/Lessons/LessonsPage';
 
 setDefaultTimeout(15000);
 
@@ -63,6 +64,7 @@ Before(async function (this: CustomWorld, scenario) {
     this.codingPage = new CodingPage(this.page);
     this.signUpPage = new SignUpPage(this.page);
     this.sidebarPage = new SidebarPage(this.page);
+    this.lessonsPage = new LessonsPage(this.page);
 });
 
 After(async function (this: CustomWorld, scenario) {
