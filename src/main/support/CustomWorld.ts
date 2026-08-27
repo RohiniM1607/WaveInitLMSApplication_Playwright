@@ -19,6 +19,7 @@ export class CustomWorld extends World {
     discussionPage!: DiscussionPage;
     lastPostedMessage!: string;
     lastPostedMessages!: string[];
+    replyMessages?: Record<string, string>;
     codingPage!: CodingPage;
     signUpPage!: SignUpPage;
 }
