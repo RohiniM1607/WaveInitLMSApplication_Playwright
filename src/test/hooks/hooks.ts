@@ -9,6 +9,7 @@ import { QuizPage } from '../pages/QuizPage';
 import { DiscussionPage } from '../pages/DiscussionPage';
 import { CodingPage } from '../pages/Coding/CodingPage';
 import { SignUpPage } from '../pages/SignUpPage';
+import { SidebarPage } from '../pages/SidebarPage';
 import { AssessmentPage } from '../pages/Coding/AssessmentPage';
 import { LessonsPage } from '../../test/pages/Lessons/LessonsPage';
 
@@ -63,6 +64,7 @@ Before(async function (this: CustomWorld, scenario) {
     this.discussionPage = new DiscussionPage(this.page);
     this.codingPage = new CodingPage(this.page);
     this.signUpPage = new SignUpPage(this.page);
+    this.sidebarPage = new SidebarPage(this.page);
     this.assessmentPage = new AssessmentPage(this.page);
     this.lessonsPage = new LessonsPage(this.page);
 });

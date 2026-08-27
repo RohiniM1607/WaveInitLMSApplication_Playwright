@@ -6,9 +6,12 @@ import { QuizPage } from "../../test/pages/QuizPage";
 import { DiscussionPage } from "../../test/pages/DiscussionPage";
 import { CodingPage } from '../../test/pages/Coding/CodingPage';
 import { SignUpPage } from '../../test/pages/SignUpPage';
+import { SidebarPage } from '../../test/pages/SidebarPage';
+import { MyProfilePage } from '../../test/pages/MyProfilePage';
 import { AssessmentPage } from '../../test/pages/Coding/AssessmentPage';
 
 import { LessonsPage } from '../../test/pages/Lessons/LessonsPage';
+
 export class CustomWorld extends World {
     browser!: Browser;
     context!: BrowserContext;
@@ -25,6 +28,8 @@ export class CustomWorld extends World {
     lessonsPage!: LessonsPage;
     codingPage!: CodingPage;
     signUpPage!: SignUpPage;
+    sidebarPage!: SidebarPage;
+    myProfilePage!: MyProfilePage;
     assessmentPage!: AssessmentPage;
 }
 
