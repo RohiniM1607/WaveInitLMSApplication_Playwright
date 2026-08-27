@@ -64,14 +64,12 @@ When('the learner clicks the {string} button', STEP_TIMEOUT, async function (thi
     }
 });
 
-// Click Post without typing anything into the post text box (used for the empty-post validation scenario)
 When('the learner clicks the {string} button without entering a message', STEP_TIMEOUT, async function (this: CustomWorld, buttonName: string) {
     if (buttonName === "Post") {
         await this.discussionPage.submitPostWithoutMessage();
     }
 });
 
-// Data-driven: no post type names are hardcoded here — every entry under discussionData.posts is posted in turn.
 When('the learner creates a post for each post type from test data', STEP_TIMEOUT, async function (this: CustomWorld) {
     const posts = discussionData.posts as Record<string, string>;
     this.lastPostedMessages = [];
@@ -96,7 +94,6 @@ Then('the posted message should be visible under the {string} tab', STEP_TIMEOUT
     expect(isVisible).toBe(true);
 });
 
-// Verifies every message collected while looping through the post types is visible under the given tab.
 Then('all the posted messages should be visible under the {string} tab', STEP_TIMEOUT, async function (this: CustomWorld, tabName: string) {
     if (tabName === "All Posts") {
         await this.discussionPage.openAllPostsTab();
@@ -110,15 +107,12 @@ Then('all the posted messages should be visible under the {string} tab', STEP_TI
     }
 });
 
-// Verifies a required-field validation error is shown when Post is clicked with an empty message
 Then('a required field validation error should be displayed', STEP_TIMEOUT, async function (this: CustomWorld) {
     const isErrorDisplayed = await this.discussionPage.isRequiredValidationErrorDisplayed();
     expect(isErrorDisplayed).toBe(true);
 });
 
-// ---------------------------------------------------------------------
 // Reply steps
-// ---------------------------------------------------------------------
 
 When('the learner clicks the {string} link on the posted message', STEP_TIMEOUT, async function (this: CustomWorld, linkName: string) {
     if (linkName === "Reply") {
@@ -126,8 +120,6 @@ When('the learner clicks the {string} link on the posted message', STEP_TIMEOUT,
     }
 });
 
-// Reply content is never typed into the feature file — it is looked up from discussionReplyData.csv
-// by postType + replyKey, and a timestamp is appended to keep every reply unique.
 When('the learner enters the {string} reply message for {string} from test data', STEP_TIMEOUT, async function (this: CustomWorld, replyKey: string, postType: string) {
     const baseMessage = getReplyBaseMessage(postType, replyKey);
     const uniqueMessage = `${baseMessage} - ${Date.now()}`;
@@ -154,9 +146,7 @@ Then('the {string} reply message should not be visible below the posted message'
     expect(isVisible).toBe(false);
 });
 
-// ---------------------------------------------------------------------
-// Delete steps (shared by post-delete and reply-delete scenarios)
-// ---------------------------------------------------------------------
+// Delete (post and reply)
 
 When('the learner clicks the delete icon on the posted message', STEP_TIMEOUT, async function (this: CustomWorld) {
     await this.discussionPage.clickDeleteIcon(this.lastPostedMessage);
