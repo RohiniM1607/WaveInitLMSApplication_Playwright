@@ -1,4 +1,4 @@
-import { Expect, Locator } from "playwright/test";
+import { Locator } from "playwright/test";
 import { BasePage } from "../BasePage";
 import { logger } from "../../../main/utils/logger";
 
@@ -11,6 +11,8 @@ export class CodingPage extends BasePage {
     private readonly assessmentTable = this.page.locator("table.cct-table");
     private readonly assessmentRows = this.page.locator("table.cct-table tbody tr");
     private readonly cancelButton = this.page.getByRole("button", {name: "Cancel", exact: true});
+    private readonly assessmentRow = (assessmentTitle: string): Locator => this.assessmentRows.filter({ hasText: assessmentTitle }).first();
+    //private readonly editButton = this.page.getByRole("button", { name: "Edit", exact: true });
 
     async selectCourse(course: string) { 
         const courseItem = this.courseItem(course);
@@ -71,4 +73,24 @@ export class CodingPage extends BasePage {
         }
         logger.info(`Verified that assessment was not added. ` +`Previous: ${previousCount}, Current: ${currentCount}`);
     }
+
+    async clickEdit(assessmentTitle: string) {
+    const row = this.assessmentRow(assessmentTitle);
+
+    await row.waitFor({
+        state: "visible",
+        timeout: 10000
+    });
+
+    const editButton = row.locator('button[title="Edit Assessment"]');
+
+    await editButton.waitFor({
+        state: "visible",
+        timeout: 10000
+    });
+
+    await this.click(editButton);
+
+    logger.info(`Clicked Edit button for: ${assessmentTitle}`);
+}
 }
