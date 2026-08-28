@@ -12,6 +12,7 @@ import { SidebarPage } from '../../test/pages/SidebarPage';
 import { MyProfilePage } from '../../test/pages/MyProfilePage';
 import { LessonsPage } from '../../test/pages/Lessons/LessonsPage';
 import { DeleteConfirmationPage } from '../../test/pages/Coding/DeleteConfirmationPage';
+import { DeleteCodingVar } from '../types/DeleteCodingVar';
 
 export class CustomWorld extends World {
     browser!: Browser;
@@ -34,6 +35,7 @@ export class CustomWorld extends World {
     sidebarPage!: SidebarPage;
     myProfilePage!: MyProfilePage;
     deleteConfirmationPage!: DeleteConfirmationPage;
+    deleteCodingVar!: DeleteCodingVar;
 }
 
 setWorldConstructor(CustomWorld);
