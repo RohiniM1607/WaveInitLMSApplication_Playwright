@@ -43,8 +43,17 @@ export class QuizPage extends BasePage {
             "e.g. Module 2 Knowledge Check"
         );
 
+    /*
+     * Locate quiz question textareas.
+     *
+     * nth(index) is still used, but only against the
+     * question textarea collection instead of every
+     * textarea on the page.
+     */
     private questionTextarea = (index: number) =>
-        this.page.locator("textarea").nth(index);
+        this.page.locator(
+            'textarea[placeholder*="question" i]'
+        ).nth(index);
 
     private optionInput = (
         qIndex: number,
@@ -62,6 +71,28 @@ export class QuizPage extends BasePage {
         this.page
             .locator(`input[name="q_${qIndex}_opt"]`)
             .nth(optIndex);
+
+
+    // ================================
+    // Delete Quiz Locators
+    // ================================
+
+    private quizRows = (quizTitle: string) =>
+        this.page
+            .locator("table.cqt-table tbody tr")
+            .filter({
+                has: this.page.getByText(quizTitle, {
+                    exact: true
+                })
+            });
+
+    private quizRow = (quizTitle: string) =>
+        this.quizRows(quizTitle).last();
+
+    private confirmDeleteBtn =
+        this.page.getByRole("button", {
+            name: "Delete Permanently"
+        });
 
 
     // ================================
@@ -135,9 +166,30 @@ export class QuizPage extends BasePage {
             "Adding a new question"
         );
 
+        const currentCount =
+            await this.questionTextareaCount();
+
         await this.click(
             this.addQuestionBtn
         );
+
+        await this.page.waitForFunction(
+            (expectedCount) => {
+                return document.querySelectorAll(
+                    'textarea[placeholder*="question" i]'
+                ).length >= expectedCount;
+            },
+            currentCount + 1
+        );
+    }
+
+    private async questionTextareaCount() {
+
+        return await this.page
+            .locator(
+                'textarea[placeholder*="question" i]'
+            )
+            .count();
     }
 
     async fillQuestion(
@@ -151,13 +203,15 @@ export class QuizPage extends BasePage {
             `Filling question ${index + 1}: ${questionText}`
         );
 
-        // Fill question
+        await this.questionTextarea(index).waitFor({
+            state: "visible"
+        });
+
         await this.fill(
             this.questionTextarea(index),
             questionText
         );
 
-        // Fill options
         for (
             let i = 0;
             i < options.length;
@@ -169,7 +223,6 @@ export class QuizPage extends BasePage {
                 options[i]
             );
 
-            // Select correct answer
             if (
                 options[i] === correctAnswer
             ) {
@@ -231,12 +284,11 @@ export class QuizPage extends BasePage {
     ) {
 
         const row =
-            this.page.locator(
-                "table.cqt-table tbody tr",
-                {
-                    hasText: quizTitle
-                }
-            );
+            this.quizRow(quizTitle);
+
+        await row.waitFor({
+            state: "visible"
+        });
 
         const questionCountText =
             await row
@@ -259,5 +311,59 @@ export class QuizPage extends BasePage {
             status:
                 statusText?.trim()
         };
+    }
+
+
+    // ================================
+    // Delete Quiz Methods
+    // ================================
+
+    async deleteQuiz(
+        quizTitle: string
+    ) {
+
+        logger.info(
+            `Deleting quiz: ${quizTitle}`
+        );
+
+        const row =
+            this.quizRow(quizTitle);
+
+        await row.waitFor({
+            state: "visible"
+        });
+
+        await this.click(
+            row.locator(".cqt-action-btn--delete")
+        );
+
+        await this.confirmDeleteBtn.waitFor({
+            state: "visible"
+        });
+
+        await this.click(
+            this.confirmDeleteBtn
+        );
+
+        /*
+         * Wait until the exact quiz row disappears
+         * from the DOM.
+         */
+        await row.waitFor({
+            state: "detached"
+        });
+    }
+
+    async isQuizPresent(
+        quizTitle: string
+    ) {
+
+        /*
+         * Give the table a chance to finish updating.
+         */
+        await this.page.waitForLoadState("networkidle")
+            .catch(() => {});
+
+        return await this.quizRows(quizTitle).count() > 0;
     }
 }

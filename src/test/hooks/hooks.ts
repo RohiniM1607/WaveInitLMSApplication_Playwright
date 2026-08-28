@@ -9,9 +9,11 @@ import { QuizPage } from '../pages/QuizPage';
 import { DiscussionPage } from '../pages/DiscussionPage';
 import { CodingPage } from '../pages/Coding/CodingPage';
 import { SignUpPage } from '../pages/SignUpPage';
+import { EditAssessmentPage } from '../pages/Coding/EditAssessmentPage';
+import { SidebarPage } from '../pages/SidebarPage';
 import { AssessmentGenerateWithAIPage } from '../pages/Coding/AssessementGenerateWithAIPage';
 import { LessonsPage } from '../../test/pages/Lessons/LessonsPage';
-import { EditAssessmentPage } from '../pages/Coding/EditAssessmentPage';
+import { MyProfilePage } from '../pages/MyProfilePage';
 
 setDefaultTimeout(15000);
 
@@ -67,6 +69,10 @@ Before(async function (this: CustomWorld, scenario) {
     this.assessmentPage = new AssessmentGenerateWithAIPage(this.page);
     this.lessonsPage = new LessonsPage(this.page);
     this.editAssessmentPage = new EditAssessmentPage(this.page);
+    this.sidebarPage = new SidebarPage(this.page);
+    this.assessmentPage = new AssessmentGenerateWithAIPage(this.page);
+    this.lessonsPage = new LessonsPage(this.page);
+    this.myProfilePage = new MyProfilePage(this.page);
 });
 
 After(async function (this: CustomWorld, scenario) {

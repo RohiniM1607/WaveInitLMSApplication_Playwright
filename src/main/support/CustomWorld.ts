@@ -8,8 +8,10 @@ import { CodingPage } from '../../test/pages/Coding/CodingPage';
 import { SignUpPage } from '../../test/pages/SignUpPage';
 import { AssessmentGenerateWithAIPage } from '../../test/pages/Coding/AssessementGenerateWithAIPage';
 import { EditAssessmentPage } from '../../test/pages/Coding/EditAssessmentPage';
-
+import { SidebarPage } from '../../test/pages/SidebarPage';
+import { MyProfilePage } from '../../test/pages/MyProfilePage';
 import { LessonsPage } from '../../test/pages/Lessons/LessonsPage';
+
 export class CustomWorld extends World {
     browser!: Browser;
     context!: BrowserContext;
@@ -28,6 +30,8 @@ export class CustomWorld extends World {
     signUpPage!: SignUpPage;
     assessmentPage!: AssessmentGenerateWithAIPage;
     editAssessmentPage!: EditAssessmentPage;
+    sidebarPage!: SidebarPage;
+    myProfilePage!: MyProfilePage;
 }
 
 setWorldConstructor(CustomWorld);
