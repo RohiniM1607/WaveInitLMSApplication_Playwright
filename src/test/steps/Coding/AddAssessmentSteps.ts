@@ -25,7 +25,7 @@ When('the trainer clicks on the Create Assessment button', async function (this:
 );
 
 Then('a new coding assessment should be added to the assessment list', async function (this: CustomWorld) {
-    await this.codingPage.verifyAssessmentAdded(previousAssessmentCount);
+    await this.codingPage.verifyAssessmentCount(previousAssessmentCount, previousAssessmentCount + 1);
 });
 
 When('the trainer clicks on the Generate with AI button', async function (this: CustomWorld) {
@@ -49,5 +49,5 @@ When("the trainer clicks on the Cancel button", async function () {
 });
 
 Then("a new coding assessment should not be added to the assessment list", async function () {
-    await this.codingPage.verifyAssessmentNotAdded(previousAssessmentCount);
+    await this.codingPage.verifyAssessmentCount(previousAssessmentCount,previousAssessmentCount);
 });
