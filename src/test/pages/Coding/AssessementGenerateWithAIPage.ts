@@ -2,7 +2,7 @@ import { Locator } from "playwright";
 import { BasePage } from "../BasePage";
 import { logger } from "../../../main/utils/logger";
 
-export class AssessmentPage extends BasePage {
+export class AssessmentGenerateWithAIPage extends BasePage {
 
     private readonly topicOrPrompt = this.page.getByPlaceholder("e.g. JavaScript array methods, Python data structures, etc.");
     private readonly numberOfProblems: Locator = this.page.locator("label").filter({ hasText: "Number of Problems" }).locator("..").locator("select");

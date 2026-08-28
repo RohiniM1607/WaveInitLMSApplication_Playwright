@@ -6,10 +6,10 @@ import { QuizPage } from "../../test/pages/QuizPage";
 import { DiscussionPage } from "../../test/pages/DiscussionPage";
 import { CodingPage } from '../../test/pages/Coding/CodingPage';
 import { SignUpPage } from '../../test/pages/SignUpPage';
+import { AssessmentGenerateWithAIPage } from '../../test/pages/Coding/AssessementGenerateWithAIPage';
+import { EditAssessmentPage } from '../../test/pages/Coding/EditAssessmentPage';
 import { SidebarPage } from '../../test/pages/SidebarPage';
 import { MyProfilePage } from '../../test/pages/MyProfilePage';
-import { AssessmentPage } from '../../test/pages/Coding/AssessmentPage';
-
 import { LessonsPage } from '../../test/pages/Lessons/LessonsPage';
 
 export class CustomWorld extends World {
@@ -28,9 +28,10 @@ export class CustomWorld extends World {
     lessonsPage!: LessonsPage;
     codingPage!: CodingPage;
     signUpPage!: SignUpPage;
+    assessmentPage!: AssessmentGenerateWithAIPage;
+    editAssessmentPage!: EditAssessmentPage;
     sidebarPage!: SidebarPage;
     myProfilePage!: MyProfilePage;
-    assessmentPage!: AssessmentPage;
 }
 
 setWorldConstructor(CustomWorld);
