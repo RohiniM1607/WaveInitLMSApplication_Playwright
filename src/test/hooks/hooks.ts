@@ -14,6 +14,7 @@ import { SidebarPage } from '../pages/SidebarPage';
 import { AssessmentGenerateWithAIPage } from '../pages/Coding/AssessementGenerateWithAIPage';
 import { LessonsPage } from '../../test/pages/Lessons/LessonsPage';
 import { MyProfilePage } from '../pages/MyProfilePage';
+import { DeleteConfirmationPage } from '../pages/Coding/DeleteConfirmationPage';
 
 setDefaultTimeout(15000);
 
@@ -73,6 +74,7 @@ Before(async function (this: CustomWorld, scenario) {
     this.assessmentPage = new AssessmentGenerateWithAIPage(this.page);
     this.lessonsPage = new LessonsPage(this.page);
     this.myProfilePage = new MyProfilePage(this.page);
+    this.deleteConfirmationPage = new DeleteConfirmationPage(this.page);
 });
 
 After(async function (this: CustomWorld, scenario) {
