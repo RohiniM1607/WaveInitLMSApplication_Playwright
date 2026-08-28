@@ -1,9 +1,10 @@
 @sowndariya
-Feature: Learner Explore Courses - Join, Already Joined and Full status
+
+Feature: Sowndariya_28AUG2026_Learner Explore Courses - Search, Enrollment and Course Filters
 
   As a learner
-  I want to open Explore Courses from the dashboard
-  So that I can see which courses I can join, which I already joined, and which are full
+  I want to explore and search courses
+  So that I can verify course enrollment status and course filters
 
   Background:
     Given The user launches the application
@@ -12,34 +13,31 @@ Feature: Learner Explore Courses - Join, Already Joined and Full status
     And The user clicks the login button
     Then The dashboard header should be displayed with the text "Welcome back"
     And the learner clicks on "Explore Courses" from the dashboard header
-    Then the learner should be on the "Available" courses tab
 
-  @exploreCourses @statusCheck
-  Scenario: Learner checks the status shown on every course card
-    When the learner checks the status of every course card on the "Available" tab
-    Then every course card should show either "Join", "Already Joined" or "Full" as its status
+  @exploreCourses @searchAndJoin
+  Scenario: Learner searches a course and joins it when Join Training is available
+    When the learner enters the course name from test data in the search field
+    Then the searched course should be displayed
+    And the learner should see the correct enrollment status for the searched course
+    When the learner joins the searched course if Join Training is available
+    Then the searched course should show the correct final enrollment status
 
-  @exploreCourses @openNotJoined
-  Scenario: Learner opens a course that is not joined yet and sees only the Register option
-    When the learner opens a course card that shows the "Join" status
-    Then the course details should show the "Register" button only
-    And the "Already Joined" status should not be visible on the course details
+  @exploreCourses @joinTab
+  Scenario: Learner verifies the Join tab contains only enrolled courses
+    When the learner clicks on the Explore Courses "Join" tab
+    Then only enrolled courses should be displayed
+    And every course should show "Already enrolled" status
 
-  @exploreCourses @joinCourse
-  Scenario: Learner registers for a course and it now shows Already Joined
-    When the learner opens a course card that shows the "Join" status
-    And the learner clicks the "Register" button on the course details
-    Then the course details should show the "Already Joined" status only
-    And the "Register" button should not be visible on the course details
+  @exploreCourses @openTab
+  Scenario: Learner verifies the Open tab contains only courses available for joining
+    When the learner clicks on the Explore Courses "Open" tab
+    Then only courses available for joining should be displayed
+    And every course should show "Join Training"
+    And Already enrolled courses should not be displayed
+    And Training is full courses should not be displayed
 
-  @exploreCourses @openFull
-  Scenario: Learner opens a course that is full and cannot register
-    When the learner opens a course card that shows the "Full" status
-    Then the course details should show the "Full" status
-    And the "Register" button should not be visible on the course details
-
-  @exploreCourses @openAlreadyJoined
-  Scenario: Learner opens a course already joined and is not offered to register again
-    When the learner opens a course card that shows the "Already Joined" status
-    Then the course details should show the "Already Joined" status
-    And the "Register" button should not be visible on the course details
+  @exploreCourses @allTab
+  Scenario: Learner verifies all courses and their enrollment statuses
+    When the learner clicks on the Explore Courses "All" tab
+    Then all courses should be displayed
+    And every course should show Join Training, Already enrolled or Training is full status

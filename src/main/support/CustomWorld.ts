@@ -33,7 +33,8 @@ export class CustomWorld extends World {
     myProfilePage!: MyProfilePage;
     assessmentPage!: AssessmentPage;
     exploreCoursesPage!: ExploreCoursesPage;
-    courseStatuses!: string[];
+    courseName?: string;
+    courseStatus?: string;
 }
 
 setWorldConstructor(CustomWorld);

@@ -1,116 +1,472 @@
-import { expect, Locator } from "playwright/test";
+import { expect, Locator } from "@playwright/test";
 import { logger } from "../../main/utils/logger";
 import { BasePage } from "./BasePage";
 
 export class ExploreCoursesPage extends BasePage {
 
-    private exploreCoursesLink = this.page.getByText('Explore Courses', { exact: true }).first();
-    private availableTab = this.page.getByText('Available', { exact: true }).first();
+    /*
+     * Dashboard
+     */
+    private exploreCoursesLink = this.page.getByText(
+        "Explore Courses",
+        { exact: true }
+    ).first();
 
-    // Every course card has an "Open" action - used as the anchor to find the card boundary
-    private openButtons = this.page.getByRole('button', { name: 'Open', exact: true });
 
-    // Wording is matched loosely (Register / Join) since the exact label on the
-    // course-details view was not confirmed against the live app.
-    private registerButton = this.page.getByRole('button', { name: /^(register|join)$/i }).first();
-    private alreadyJoinedStatus = this.page.getByText('Already Joined', { exact: true });
-    private fullStatus = this.page.getByText('Full', { exact: true });
-
-    async openExploreCourses() {
-        logger.info("Opening Explore Courses from the dashboard");
-        await this.click(this.exploreCoursesLink);
-    }
-
-    async isOnAvailableTab(timeout = 15000): Promise<boolean> {
-        try {
-            await expect(this.availableTab).toBeVisible({ timeout });
-            return true;
-        } catch {
-            return false;
+    /*
+     * Tabs
+     */
+    private allTab = this.page.getByRole(
+        "button",
+        {
+            name: "All",
+            exact: true
         }
+    );
+
+    private joinTab = this.page.locator(':text-is("Join Training")')
+
+    private openTab = this.page.getByRole(
+        "button",
+        {
+            name: "Open",
+            exact: true
+        }
+    );
+
+
+    /*
+     * Search
+     */
+    private searchInput = this.page.locator(
+        'input[placeholder*="Search"], input[type="search"]'
+    ).first();
+
+
+    /*
+     * Actual status/action locators
+     */
+    private joinTrainingButtons = this.page.locator(
+        "button"
+    ).filter({
+        hasText: "Join Training"
+    });
+
+    private alreadyEnrolledStatus = this.page.getByText(
+        "Already enrolled",
+        {
+            exact: true
+        }
+    );
+
+    private trainingFullStatus = this.page.locator(
+        "span"
+    ).filter({
+        hasText: "Training is full"
+    });
+
+
+    /*
+     * Open Explore Courses
+     */
+    async openExploreCourses(): Promise<void> {
+
+        logger.info("Opening Explore Courses");
+
+        await this.exploreCoursesLink.waitFor({
+            state: "visible",
+            timeout: 15000
+        });
+
+        await this.exploreCoursesLink.click();
+
+        await this.waitForCoursesToLoad();
     }
 
-    async getCourseCardCount(): Promise<number> {
-        await this.openButtons.first().waitFor({ state: 'visible', timeout: 20000 }).catch(() => { });
-        return await this.openButtons.count();
+
+    /*
+     * All tab
+     */
+    async clickAllTab(): Promise<void> {
+
+        logger.info("Clicking All tab");
+
+        await this.allTab.waitFor({
+            state: "visible",
+            timeout: 10000
+        });
+
+        await this.allTab.click();
+
+        await this.waitForCoursesToLoad();
     }
 
-    // Card boundary = the closest container above the "Open" button that also
-    // holds the course's status text (Join / Already Joined / Full)
-    private getCourseCard(index: number): Locator {
-        return this.openButtons.nth(index).locator(
-            'xpath=ancestor::*[self::div or self::li or self::article]' +
-            '[.//*[normalize-space(text())="Join" or normalize-space(text())="Already Joined" or normalize-space(text())="Full"]][1]'
+
+    /*
+     * Join tab
+     */
+    async clickJoinTab() {
+    const joinTab = this.page.getByText('Join Training', {
+        exact: true
+    });
+
+    await joinTab.waitFor({ state: 'visible' });
+    await joinTab.click();
+}
+
+
+    /*
+     * Open tab
+     */
+    async clickOpenTab(): Promise<void> {
+
+        logger.info("Clicking Open tab");
+
+        await this.openTab.waitFor({
+            state: "visible",
+            timeout: 10000
+        });
+
+        await this.openTab.click();
+
+        await this.waitForCoursesToLoad();
+    }
+
+
+    /*
+     * Search course
+     */
+    async searchCourse(courseName: string): Promise<void> {
+
+        logger.info(
+            `Searching course: ${courseName}`
         );
+
+        await this.searchInput.waitFor({
+            state: "visible",
+            timeout: 10000
+        });
+
+        await this.searchInput.fill(courseName);
+
+        await this.page.waitForTimeout(1000);
     }
 
-    async getCourseStatus(index: number): Promise<string> {
-        const card = this.getCourseCard(index);
 
-        if (await card.getByText('Already Joined', { exact: true }).isVisible().catch(() => false)) {
-            return 'Already Joined';
-        }
-        if (await card.getByText('Full', { exact: true }).isVisible().catch(() => false)) {
-            return 'Full';
-        }
-        if (await card.getByText('Join', { exact: true }).isVisible().catch(() => false)) {
-            return 'Join';
-        }
-        return 'Unknown';
-    }
+    /*
+     * Get course locator
+     */
+    private getCourse(courseName: string): Locator {
 
-    async openFirstCourseWithStatus(status: string) {
-        const count = await this.getCourseCardCount();
-        for (let i = 0; i < count; i++) {
-            const cardStatus = await this.getCourseStatus(i);
-            if (cardStatus === status) {
-                logger.info(`Opening course card #${i} with status "${status}"`);
-                await this.click(this.openButtons.nth(i));
-                return;
+        return this.page.getByText(
+            courseName,
+            {
+                exact: true
             }
-        }
-        throw new Error(`No course card with status "${status}" was found on the Available tab`);
+        ).first();
     }
 
-    async isRegisterButtonVisible(timeout = 10000): Promise<boolean> {
-        try {
-            await expect(this.registerButton).toBeVisible({ timeout });
-            return true;
-        } catch {
-            return false;
-        }
+
+    /*
+     * Check searched course
+     */
+    async isCourseDisplayed(
+        courseName: string
+    ): Promise<boolean> {
+
+        return await this.getCourse(
+            courseName
+        ).isVisible().catch(() => false);
     }
 
-    async isRegisterButtonHidden(timeout = 5000): Promise<boolean> {
-        try {
-            await expect(this.registerButton).toBeHidden({ timeout });
-            return true;
-        } catch {
-            return false;
-        }
+
+    /*
+     * Get course card
+     */
+    private async getCourseCard(
+        courseName: string
+    ): Promise<Locator> {
+
+        const course = this.getCourse(
+            courseName
+        );
+
+        await course.waitFor({
+            state: "visible",
+            timeout: 10000
+        });
+
+        const card = course.locator(
+            'xpath=ancestor::*[' +
+            './/button[contains(normalize-space(.),"Join Training")]' +
+            ' or .//*[normalize-space(.)="Already enrolled"]' +
+            ' or .//*[contains(normalize-space(.),"Training is full")]' +
+            '][1]'
+        );
+
+        return card;
     }
 
-    async clickRegisterButton() {
-        logger.info("Clicking the Register button on the course details");
-        await this.click(this.registerButton);
-        await this.page.waitForLoadState('networkidle').catch(() => { });
+
+    /*
+     * Get actual status of searched course
+     */
+    async getCourseStatus(
+        courseName: string
+    ): Promise<string> {
+
+        const card = await this.getCourseCard(
+            courseName
+        );
+
+
+        /*
+         * Already enrolled
+         */
+        const alreadyEnrolled =
+            card.getByText(
+                "Already enrolled",
+                {
+                    exact: true
+                }
+            );
+
+        if (
+            await alreadyEnrolled.isVisible().catch(() => false)
+        ) {
+            return "Already enrolled";
+        }
+
+
+        /*
+         * Join Training
+         */
+        const joinTraining =
+            card.locator("button").filter({
+                hasText: "Join Training"
+            });
+
+        if (
+            await joinTraining.isVisible().catch(() => false)
+        ) {
+            return "Join Training";
+        }
+
+
+        /*
+         * Training is full
+         */
+        const trainingFull =
+            card.getByText(
+                "Training is full",
+                {
+                    exact: true
+                }
+            );
+
+        if (
+            await trainingFull.isVisible().catch(() => false)
+        ) {
+            return "Training is full";
+        }
+
+
+        return "Unknown";
     }
 
-    async isAlreadyJoinedVisible(timeout = 10000): Promise<boolean> {
-        try {
-            await expect(this.alreadyJoinedStatus.first()).toBeVisible({ timeout });
-            return true;
-        } catch {
-            return false;
-        }
+
+    /*
+     * Click Join Training for searched course
+     */
+    async clickJoinTraining(
+        courseName: string
+    ): Promise<void> {
+
+        logger.info(
+            `Clicking Join Training for: ${courseName}`
+        );
+
+        const card = await this.getCourseCard(
+            courseName
+        );
+
+        const joinTraining =
+            card.locator("button").filter({
+                hasText: "Join Training"
+            }).first();
+
+        await joinTraining.waitFor({
+            state: "visible",
+            timeout: 10000
+        });
+
+        await joinTraining.click();
+
+        await this.waitForCoursesToLoad();
     }
 
-    async isFullStatusVisible(timeout = 10000): Promise<boolean> {
-        try {
-            await expect(this.fullStatus.first()).toBeVisible({ timeout });
-            return true;
-        } catch {
-            return false;
-        }
+
+    /*
+     * Verify All tab
+     */
+    async verifyAllCourses(): Promise<void> {
+
+        const joinTrainingCount =
+            await this.joinTrainingButtons.count();
+
+        const alreadyEnrolledCount =
+            await this.alreadyEnrolledStatus.count();
+
+        const fullCount =
+            await this.trainingFullStatus.count();
+
+        const totalCourses =
+            joinTrainingCount +
+            alreadyEnrolledCount +
+            fullCount;
+
+        logger.info(
+            `All tab -> Join Training: ${joinTrainingCount}, ` +
+            `Already enrolled: ${alreadyEnrolledCount}, ` +
+            `Training is full: ${fullCount}`
+        );
+
+        expect(
+            totalCourses,
+            "No courses were displayed in All tab"
+        ).toBeGreaterThan(0);
+    }
+
+
+    /*
+     * Verify Join tab.
+     *
+     * Only Already enrolled courses should be present.
+     */
+    async verifyJoinTabCourses(): Promise<void> {
+
+        await this.waitForCoursesToLoad();
+
+        const alreadyEnrolledCount =
+            await this.alreadyEnrolledStatus.count();
+
+        const joinTrainingCount =
+            await this.joinTrainingButtons.count();
+
+        const fullCount =
+            await this.trainingFullStatus.count();
+
+        logger.info(
+            `Join tab -> Already enrolled: ${alreadyEnrolledCount}, ` +
+            `Join Training: ${joinTrainingCount}, ` +
+            `Training is full: ${fullCount}`
+        );
+
+        expect(
+            alreadyEnrolledCount,
+            "Join tab should contain enrolled courses"
+        ).toBeGreaterThan(0);
+
+        expect(
+            joinTrainingCount,
+            "Join Training should not appear in Join tab"
+        ).toBe(0);
+
+        expect(
+            fullCount,
+            "Training is full should not appear in Join tab"
+        ).toBe(0);
+    }
+
+
+    /*
+     * Verify Open tab.
+     *
+     * Only Join Training courses should be present.
+     */
+    async verifyOpenTabCourses(): Promise<void> {
+
+        await this.waitForCoursesToLoad();
+
+        const joinTrainingCount =
+            await this.joinTrainingButtons.count();
+
+        const alreadyEnrolledCount =
+            await this.alreadyEnrolledStatus.count();
+
+        const fullCount =
+            await this.trainingFullStatus.count();
+
+        logger.info(
+            `Open tab -> Join Training: ${joinTrainingCount}, ` +
+            `Already enrolled: ${alreadyEnrolledCount}, ` +
+            `Training is full: ${fullCount}`
+        );
+
+        expect(
+            joinTrainingCount,
+            "Open tab should contain Join Training courses"
+        ).toBeGreaterThan(0);
+
+        expect(
+            alreadyEnrolledCount,
+            "Already enrolled courses should not appear in Open tab"
+        ).toBe(0);
+
+        expect(
+            fullCount,
+            "Training is full courses should not appear in Open tab"
+        ).toBe(0);
+    }
+
+
+    /*
+     * Verify Register does not exist.
+     */
+    async verifyRegisterNotDisplayed(): Promise<void> {
+
+        const registerButton =
+            this.page.getByRole(
+                "button",
+                {
+                    name: /register/i
+                }
+            );
+
+        expect(
+            await registerButton.count()
+        ).toBe(0);
+    }
+
+
+    /*
+     * Wait for course list
+     */
+    private async waitForCoursesToLoad(): Promise<void> {
+
+        await this.page.waitForLoadState(
+            "networkidle"
+        ).catch(() => {});
+
+        await this.page.waitForTimeout(500);
+    }
+
+
+    /*
+     * Expose counts for step definitions
+     */
+    async getJoinTrainingCount(): Promise<number> {
+
+        return await this.joinTrainingButtons.count();
+    }
+
+    async getAlreadyEnrolledCount(): Promise<number> {
+
+        return await this.alreadyEnrolledStatus.count();
+    }
+
+    async getTrainingFullCount(): Promise<number> {
+
+        return await this.trainingFullStatus.count();
     }
 }
