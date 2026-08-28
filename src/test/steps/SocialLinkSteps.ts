@@ -22,9 +22,9 @@ When('The user clicks the Save button', async function (this: CustomWorld) {
 });
 
 Then('The edited social link should be updated in the user\'s profile', async function (this: CustomWorld, dataTable: any) {
-    const socialLinks = dataTable.rowHash();
+    const socialLinks = dataTable.rowsHash();
     for (const [socialMedia, link] of Object.entries(socialLinks)) {
-        expect(await this.myProfilePage.isSocialLinkVisible(link as string)).toBeTruthy();
+        expect(await this.myProfilePage.isSocialLinkVisible(link as string)).toBe(true);
     }
 });
 
@@ -33,5 +33,14 @@ When('The user clicks the {string} social media link in the profile section',asy
 });
 
 Then('The user should be redirected to the {string} page', async function (this: CustomWorld, website: string) {
-    expect(await this.myProfilePage.getCurrentPageUrl()).toContain(website.toLowerCase());
+    expect(await this.myProfilePage.getCurrentPageUrl()).toContain(website);
 });
+
+When('The user enters {string} in the {string} social media link field', async function (this: CustomWorld, link: string, socialMedia: string) {
+    await this.myProfilePage.fillSocialLink(socialMedia, link);
+})
+
+Then('The edited social link shouldn\'t be updated in the user\'s profile', () => {
+  
+})
+

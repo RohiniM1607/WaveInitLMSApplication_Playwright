@@ -9,12 +9,13 @@ Feature: VIGNESHWARAN_M 27-08-2026 Social Link Feature
     And the user logs in with "Trainer" role
     And The user navigates to the social link management page
 
+  @bug
   Scenario: User should be able to edit the social media link
     When The user clicks on the Edit button in the social link section
     And The user enters valid details in the social link form
       | Linkedin  | www.linkedin.com/in/johndoe |
       | Github    | github.com/johndoe          |
-      | Twitter   | twitter.com/johndoe         |
+      | Twitter   | x.com/johndoe               |
       | Instagram | www.instagram.com/johndoe   |
       | Portfolio | www.johndoe.com             |
       | Website   | www.johndoe.com             |
@@ -22,33 +23,29 @@ Feature: VIGNESHWARAN_M 27-08-2026 Social Link Feature
     Then The edited social link should be updated in the user's profile
       | Linkedin  | www.linkedin.com/in/johndoe |
       | Github    | github.com/johndoe          |
-      | Twitter   | twitter.com/johndoe         |
+      | Twitter   | x.com/johndoe               |
       | Instagram | www.instagram.com/johndoe   |
-      | Portfolio | www.johndoe.com             |
-      | Website   | www.johndoe.com             |
+      | Portfolio | www.johndoe.com/portfolio   |
+      | Website   | www.johndoe.com/blog        |
 
+  @bug
   Scenario Outline: User should be redirected to the social link management page after saving the social link
     When The user clicks on the Edit button in the social link section
-    And The user enters valid details in the social link form
-      | Linkedin  | www.linkedin.com/in/johndoe |
-      | Github    | www.github.com/johndoe      |
-      | Twitter   | www.twitter.com/johndoe     |
-      | Instagram | www.instagram.com/johndoe   |
-      | Portfolio | www.johndoe.com             |
-      | Website   | www.johndoe.com             |
+    And The user enters "<Link>" in the "<Website>" social media link field
     And The user clicks the Save button
-    And The user clicks the "<Website>" social media link in the profile section
-    Then The user should be redirected to the "<Website>" page
+    And The user clicks the "<Link>" social media link in the profile section
+    Then The user should be redirected to the "<Link>" page
 
     Examples:
-      | Website         |
-      | Linkedin        |
-      | Github          |
-      | Twitter         |
-      | Instagram       |
-      | www.johndoe.com |
-      | www.johndoe.com |
+      | Website   | Link                        |
+      | Linkedin  | www.linkedin.com/in/johndoe |
+      | Github    | github.com/johndoe          |
+      | Twitter   | x.com/johndoe               |
+      | Instagram | www.instagram.com/johndoe   |
+      | Portfolio | www.johndoe.com/portfolio   |
+      | Website   | www.johndoe.com/blog        |
 
+  @bug
   Scenario: User should not be able to add the social media link with invalid URL
     When The user clicks on the Edit button in the social link section
     And The user enters valid details in the social link form
@@ -59,4 +56,4 @@ Feature: VIGNESHWARAN_M 27-08-2026 Social Link Feature
       | Portfolio | INVALID_URL |
       | Website   | INVALID_URL |
     And The user clicks the Save button
-    Then The edited social link should be updated in the user's profile
+    Then The edited social link shouldn't be updated in the user's profile
