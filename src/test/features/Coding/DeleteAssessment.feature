@@ -1,5 +1,5 @@
 @Rohini @DeleteAssessment
-Feature: Rohini_25Aug2026_Adding Coding Assessment
+Feature: Rohini_28Aug2026_Adding Coding Assessment
   Background:
     Given The user launches the application
     And the user logs in with "Trainer" role
