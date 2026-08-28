@@ -1,4 +1,4 @@
-import { Locator } from "playwright/test";
+import { Locator, expect } from "playwright/test";
 import { BasePage } from "../BasePage";
 import { logger } from "../../../main/utils/logger";
 
@@ -7,13 +7,14 @@ export class CodingPage extends BasePage {
     private readonly codingModule: Locator = this.page.getByRole("tab", { name: "Coding", exact: true });
     private readonly createAssessmentButton =this.page.getByRole("button", {name: "Create Assessment"});
     private readonly generateWithAIButton =this.page.getByRole("button", {name: "Generate with AI"});
-    private readonly untitledCodingAssessment = this.page.getByText("Untitled Coding Assessment",{ exact: true });
+    //private readonly untitledCodingAssessment = this.page.getByText("Untitled Coding Assessment",{ exact: true });
     private readonly assessmentTable = this.page.locator("table.cct-table");
     private readonly assessmentRows = this.page.locator("table.cct-table tbody tr");
     private readonly cancelButton = this.page.getByRole("button", {name: "Cancel", exact: true});
     private readonly assessmentRow = (assessmentTitle: string): Locator => this.assessmentRows.filter({ hasText: assessmentTitle }).first();
     //private readonly editButton = this.page.getByRole("button", { name: "Edit", exact: true });
-
+    private readonly deleteAssessmentButton = (assessmentTitle: string): Locator =>this.assessmentRow(assessmentTitle).locator('button[title="Delete"]');
+    
     async selectCourse(course: string) { 
         const courseItem = this.courseItem(course);
         await courseItem.waitFor({ state: "visible", timeout: 10000});
@@ -48,49 +49,38 @@ export class CodingPage extends BasePage {
         return count;
     }
 
-    async verifyAssessmentAdded(previousCount: number) {
-        await this.untitledCodingAssessment.nth(previousCount).waitFor({ state: "visible", timeout: 1000000});
-        const currentCount = await this.getAssessmentCount();
-        logger.info(`Previous assessment count: ${previousCount}`);
-        logger.info(`Current assessment count: ${currentCount}`);
-        if (currentCount !== previousCount + 1) {
-            throw new Error( `Assessment was not added. ` + `Previous: ${previousCount}, ` + `Current: ${currentCount}`);
-        }
-        logger.info(`Assessment added successfully. ` + `Previous: ${previousCount}, Current: ${currentCount}`);
-    }
-
     async clickCancel() {
         await this.click(this.cancelButton);
         logger.info("Clicked Cancel button");
     }
 
-    async verifyAssessmentNotAdded(previousCount: number){
-        const currentCount = await this.getAssessmentCount();
-        logger.info(`Previous assessment count: ${previousCount}`);
-        logger.info(`Current assessment count: ${currentCount}`);
-        if (currentCount !== previousCount) {
-            throw new Error(`Assessment was added unexpectedly. ` +`Previous: ${previousCount}, ` +`Current: ${currentCount}`);
-        }
-        logger.info(`Verified that assessment was not added. ` +`Previous: ${previousCount}, Current: ${currentCount}`);
+    async clickEdit(assessmentTitle: string) {
+        const row = this.assessmentRow(assessmentTitle);
+        await row.waitFor({state: "visible", timeout: 10000});
+        const editButton = row.locator('button[title="Edit Assessment"]');
+        await editButton.waitFor({state: "visible",timeout: 10000});
+        await this.click(editButton);
+        logger.info(`Clicked Edit button for: ${assessmentTitle}`);
     }
 
-    async clickEdit(assessmentTitle: string) {
-    const row = this.assessmentRow(assessmentTitle);
+    async clickDeleteAssessment(assessmentTitle: string) {
+        const deleteButton = this.deleteAssessmentButton(assessmentTitle);
+        await deleteButton.waitFor({state: "visible",timeout: 10000});
+        await this.click(deleteButton);
+        logger.info(`Clicked Delete button for: ${assessmentTitle}`);
+    }
 
-    await row.waitFor({
-        state: "visible",
-        timeout: 10000
-    });
+    async verifyAssessmentCount(previousCount: number,expectedCount: number) 
+    {
+        logger.info(`Previous assessment count: ${previousCount}`);
+        logger.info(`Expected assessment count: ${expectedCount}`);
+        await expect.poll(async () => await this.getAssessmentCount(),{timeout: 10000,message: `Assessment count did not update`}).toBe(expectedCount);
+        const currentCount = await this.getAssessmentCount();
+        logger.info(`Current assessment count: ${currentCount}`);
+        logger.info(`Assessment count verified successfully. ` +`Expected: ${expectedCount}, Current: ${currentCount}`);
+    }
 
-    const editButton = row.locator('button[title="Edit Assessment"]');
 
-    await editButton.waitFor({
-        state: "visible",
-        timeout: 10000
-    });
 
-    await this.click(editButton);
 
-    logger.info(`Clicked Edit button for: ${assessmentTitle}`);
-}
 }
