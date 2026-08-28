@@ -41,7 +41,7 @@ When(
             throw new Error(`Dataset "${datasetKey}" was not found in quizDataset.json`);
         }
 
-        this.currentQuizTitle = `${data.quizTitle} ${Date.now()}`;
+        this.currentQuizTitle = data.quizTitle;
 
         this.currentQuizQuestionCount = data.questions.length;
 
@@ -80,5 +80,27 @@ Then(
         );
 
         expect(quizRow.status).toBe(status);
+    }
+);
+When(
+    'The trainer deletes the quiz',
+    async function (this: CustomWorld) {
+
+        await this.quizPage.deleteQuiz(
+            this.currentQuizTitle!
+        );
+    }
+);
+
+Then(
+    'The quiz should not be listed anymore',
+    async function (this: CustomWorld) {
+
+        const isPresent =
+            await this.quizPage.isQuizPresent(
+                this.currentQuizTitle!
+            );
+
+        expect(isPresent).toBe(false);
     }
 );
