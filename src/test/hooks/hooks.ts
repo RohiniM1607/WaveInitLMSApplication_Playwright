@@ -13,6 +13,7 @@ import { EditAssessmentPage } from '../pages/Coding/EditAssessmentPage';
 import { SidebarPage } from '../pages/SidebarPage';
 import { AssessmentGenerateWithAIPage } from '../pages/Coding/AssessementGenerateWithAIPage';
 import { LessonsPage } from '../../test/pages/Lessons/LessonsPage';
+import { ExploreCoursesPage } from '../pages/ExploreCoursesPage';
 import { MyProfilePage } from '../pages/MyProfilePage';
 
 setDefaultTimeout(15000);
@@ -72,6 +73,7 @@ Before(async function (this: CustomWorld, scenario) {
     this.sidebarPage = new SidebarPage(this.page);
     this.assessmentPage = new AssessmentGenerateWithAIPage(this.page);
     this.lessonsPage = new LessonsPage(this.page);
+    this.exploreCoursesPage = new ExploreCoursesPage(this.page);
     this.myProfilePage = new MyProfilePage(this.page);
 });
 
