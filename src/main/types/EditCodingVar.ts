@@ -1,4 +1,4 @@
-export interface EditCodingData {
+export interface EditCodingVar {
     scenario: string;
     existingTitle: string;
     updatedTitle: string;
