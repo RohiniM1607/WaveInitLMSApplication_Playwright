@@ -11,6 +11,8 @@ import { EditAssessmentPage } from '../../test/pages/Coding/EditAssessmentPage';
 import { SidebarPage } from '../../test/pages/SidebarPage';
 import { MyProfilePage } from '../../test/pages/MyProfilePage';
 import { LessonsPage } from '../../test/pages/Lessons/LessonsPage';
+import { DeleteConfirmationPage } from '../../test/pages/Coding/DeleteConfirmationPage';
+import { DeleteCodingVar } from '../types/DeleteCodingVar';
 import { ExploreCoursesPage } from '../../test/pages/ExploreCoursesPage';
 
 export class CustomWorld extends World {
@@ -33,6 +35,8 @@ export class CustomWorld extends World {
     editAssessmentPage!: EditAssessmentPage;
     sidebarPage!: SidebarPage;
     myProfilePage!: MyProfilePage;
+    deleteConfirmationPage!: DeleteConfirmationPage;
+    deleteCodingVar!: DeleteCodingVar;
     exploreCoursesPage!: ExploreCoursesPage;
     courseName?: string;
     courseStatus?: string;

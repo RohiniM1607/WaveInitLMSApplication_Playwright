@@ -1,9 +1,9 @@
 import { When, Then } from "@cucumber/cucumber";
 import { CustomWorld } from "../../../main/support/CustomWorld";
-import { EditCodingData } from "../../../main/types/EditCodingData";
+import { EditCodingVar} from "../../../main/types/EditCodingVar";
 import { CSVReader } from "../../../main/utils/csv_reader";
 
-const editCodingData = CSVReader.getData<EditCodingData>("src/resources/data/editCodingData.csv");
+const editCodingData = CSVReader.getData<EditCodingVar>("src/resources/data/editCodingData.csv");
 
 When("the trainer clicks the Edit button for an existing coding assessment", async function (this: CustomWorld) {
     const data = editCodingData[0];
