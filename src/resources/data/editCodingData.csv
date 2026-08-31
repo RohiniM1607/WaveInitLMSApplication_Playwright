@@ -1,0 +1,6 @@
+scenario,existingTitle,updatedTitle,updatedDescription,updatedDuration
+Edit assessment title,Untitled Coding Assessment,Updated Coding Assessment,, 
+Edit multiple assessment fields,Untitled Coding Assessment,Updated Coding Assessment,Updated coding assessment description,60
+Save assessment without changes,Untitled Coding Assessment,,, 
+Validate mandatory title,Untitled Coding Assessment,,, 
+Cancel editing assessment,Untitled Coding Assessment,Cancelled Coding Assessment,,

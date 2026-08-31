@@ -9,10 +9,13 @@ import { QuizPage } from '../pages/QuizPage';
 import { DiscussionPage } from '../pages/DiscussionPage';
 import { CodingPage } from '../pages/Coding/CodingPage';
 import { SignUpPage } from '../pages/SignUpPage';
+import { EditAssessmentPage } from '../pages/Coding/EditAssessmentPage';
 import { SidebarPage } from '../pages/SidebarPage';
-import { AssessmentPage } from '../pages/Coding/AssessmentPage';
+import { AssessmentGenerateWithAIPage } from '../pages/Coding/AssessementGenerateWithAIPage';
 import { LessonsPage } from '../../test/pages/Lessons/LessonsPage';
+import { ExploreCoursesPage } from '../pages/ExploreCoursesPage';
 import { MyProfilePage } from '../pages/MyProfilePage';
+import { DeleteConfirmationPage } from '../pages/Coding/DeleteConfirmationPage';
 
 setDefaultTimeout(15000);
 
@@ -65,10 +68,15 @@ Before(async function (this: CustomWorld, scenario) {
     this.discussionPage = new DiscussionPage(this.page);
     this.codingPage = new CodingPage(this.page);
     this.signUpPage = new SignUpPage(this.page);
-    this.sidebarPage = new SidebarPage(this.page);
-    this.assessmentPage = new AssessmentPage(this.page);
+    this.assessmentPage = new AssessmentGenerateWithAIPage(this.page);
     this.lessonsPage = new LessonsPage(this.page);
+    this.editAssessmentPage = new EditAssessmentPage(this.page);
+    this.sidebarPage = new SidebarPage(this.page);
+    this.assessmentPage = new AssessmentGenerateWithAIPage(this.page);
+    this.lessonsPage = new LessonsPage(this.page);
+    this.exploreCoursesPage = new ExploreCoursesPage(this.page);
     this.myProfilePage = new MyProfilePage(this.page);
+    this.deleteConfirmationPage = new DeleteConfirmationPage(this.page);
 });
 
 After(async function (this: CustomWorld, scenario) {
