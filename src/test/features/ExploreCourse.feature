@@ -1,5 +1,4 @@
 @sowndariya
-
 Feature: Sowndariya_28AUG2026_Learner Explore Courses - Search, Enrollment and Course Filters
 
   As a learner
@@ -22,9 +21,9 @@ Feature: Sowndariya_28AUG2026_Learner Explore Courses - Search, Enrollment and C
     When the learner joins the searched course if Join Training is available
     Then the searched course should show the correct final enrollment status
 
-  @exploreCourses @joinTab
-  Scenario: Learner verifies the Join tab contains only enrolled courses
-    When the learner clicks on the Explore Courses "Join" tab
+  @exploreCourses @joinedTab
+  Scenario: Learner verifies the Joined tab contains only enrolled courses
+    When the learner clicks on the Explore Courses "Joined" tab
     Then only enrolled courses should be displayed
     And every course should show "Already enrolled" status
 
