@@ -5,68 +5,18 @@ import { BasePage } from "./BasePage";
 export class ExploreCoursesPage extends BasePage {
     private exploreCoursesLink = this.page.getByText("Explore Courses",{ exact: true }).first();
     private exploreTrainingsLink = this.page.getByText("Explore Trainings",{ exact: true }).first();
-    private explorePageHeading = this.page.getByRole(
-        "heading",
-        { name: "Explore Trainings", exact: true }
-    );
+    private explorePageHeading = this.page.getByRole("heading",{ name: "Explore Trainings", exact: true });
+    private allTab = this.page.getByRole("button",{ name: "All", exact: true });
 
+    private openTab = this.page.getByRole("button",{ name: "Open", exact: true });
+    private joinedTab = this.page.getByRole("button",{ name: "Joined", exact: true });
 
-    /*
-     * Tabs
-     *
-     * FIX: the real UI tab is labelled "Joined" (see screenshots), not
-     * "Join". The previous version's clickJoinTab() clicked the
-     * "Join Training" button on a course card instead of a tab, which
-     * accidentally enrolled a random course and never switched tabs.
-     */
-    private allTab = this.page.getByRole(
-        "button",
-        { name: "All", exact: true }
-    );
+    private searchInput = this.page.locator('input[placeholder*="Search"], input[type="search"]').first();
+    private joinTrainingButtons = this.page.locator("button").filter({hasText: "Join Training"});
 
-    private openTab = this.page.getByRole(
-        "button",
-        { name: "Open", exact: true }
-    );
+    private alreadyEnrolledStatus = this.page.getByText("Already enrolled",{ exact: true });
+    private trainingFullStatus = this.page.locator("span").filter({hasText: "Training is full"});
 
-    private joinedTab = this.page.getByRole(
-        "button",
-        { name: "Joined", exact: true }
-    );
-
-
-    /*
-     * Search
-     */
-    private searchInput = this.page.locator(
-        'input[placeholder*="Search"], input[type="search"]'
-    ).first();
-
-
-    /*
-     * Actual status/action locators
-     */
-    private joinTrainingButtons = this.page.locator(
-        "button"
-    ).filter({
-        hasText: "Join Training"
-    });
-
-    private alreadyEnrolledStatus = this.page.getByText(
-        "Already enrolled",
-        { exact: true }
-    );
-
-    private trainingFullStatus = this.page.locator(
-        "span"
-    ).filter({
-        hasText: "Training is full"
-    });
-
-
-    /*
-     * Open Explore Courses from the Dashboard
-     */
     async openExploreCourses(): Promise<void> {
 
         logger.info("Opening Explore Courses");
@@ -94,11 +44,6 @@ export class ExploreCoursesPage extends BasePage {
         await this.waitForCoursesToLoad();
     }
 
-
-    /*
-     * Generic tab click helper with a role -> text fallback,
-     * used by all three tab methods below.
-     */
     private async clickTab(tab: Locator, tabName: string): Promise<void> {
 
         logger.info(`Clicking ${tabName} tab`);
@@ -116,37 +61,18 @@ export class ExploreCoursesPage extends BasePage {
         await this.waitForCoursesToLoad();
     }
 
-
-    /*
-     * All tab
-     */
     async clickAllTab(): Promise<void> {
         await this.clickTab(this.allTab, "All");
     }
 
-
-    /*
-     * Open tab
-     */
     async clickOpenTab(): Promise<void> {
         await this.clickTab(this.openTab, "Open");
     }
 
-
-    /*
-     * Joined tab
-     *
-     * FIX: previously named clickJoinTab() and clicked the
-     * "Join Training" course button instead of the "Joined" tab.
-     */
     async clickJoinedTab(): Promise<void> {
         await this.clickTab(this.joinedTab, "Joined");
     }
 
-
-    /*
-     * Search course
-     */
     async searchCourse(courseName: string): Promise<void> {
 
         logger.info(`Searching course: ${courseName}`);
@@ -161,17 +87,6 @@ export class ExploreCoursesPage extends BasePage {
         await this.page.waitForTimeout(1000);
     }
 
-
-    /*
-     * Get course locator
-     *
-     * NOTE: the site can list several cards with the exact same course
-     * name (e.g. multiple "Playwright Automation" trainings from
-     * different instructors/dates). .first() intentionally targets
-     * whichever one the search results surface first; if your test data
-     * needs to target a specific instance, prefer a course name/instructor
-     * combination that's unique on the site.
-     */
     private getCourse(courseName: string): Locator {
 
         return this.page.getByText(
@@ -181,9 +96,6 @@ export class ExploreCoursesPage extends BasePage {
     }
 
 
-    /*
-     * Check searched course
-     */
     async isCourseDisplayed(courseName: string): Promise<boolean> {
 
         return await this.getCourse(courseName)
@@ -191,16 +103,6 @@ export class ExploreCoursesPage extends BasePage {
             .catch(() => false);
     }
 
-
-    /*
-     * Get course card
-     *
-     * FIX: the ancestor lookup now also requires the ancestor to contain
-     * "Instructor" text, which is unique per card. Anchoring on the
-     * action button/text alone risked matching an oversized ancestor
-     * (e.g. the whole course grid) when several cards share the same
-     * course name.
-     */
     private async getCourseCard(courseName: string): Promise<Locator> {
 
         const course = this.getCourse(courseName);
@@ -224,10 +126,6 @@ export class ExploreCoursesPage extends BasePage {
         return card;
     }
 
-
-    /*
-     * Get actual status of searched course
-     */
     async getCourseStatus(courseName: string): Promise<string> {
 
         const card = await this.getCourseCard(courseName);
@@ -261,10 +159,6 @@ export class ExploreCoursesPage extends BasePage {
         return "Unknown";
     }
 
-
-    /*
-     * Click Join Training for searched course
-     */
     async clickJoinTraining(courseName: string): Promise<void> {
 
         logger.info(`Clicking Join Training for: ${courseName}`);
@@ -285,10 +179,6 @@ export class ExploreCoursesPage extends BasePage {
         await this.waitForCoursesToLoad();
     }
 
-
-    /*
-     * Verify All tab
-     */
     async verifyAllCourses(): Promise<void> {
 
         const joinTrainingCount = await this.joinTrainingButtons.count();
@@ -309,12 +199,6 @@ export class ExploreCoursesPage extends BasePage {
         ).toBeGreaterThan(0);
     }
 
-
-    /*
-     * Verify Joined tab.
-     *
-     * Only Already enrolled courses should be present.
-     */
     async verifyJoinedTabCourses(): Promise<void> {
 
         await this.waitForCoursesToLoad();
@@ -345,12 +229,6 @@ export class ExploreCoursesPage extends BasePage {
         ).toBe(0);
     }
 
-
-    /*
-     * Verify Open tab.
-     *
-     * Only Join Training courses should be present.
-     */
     async verifyOpenTabCourses(): Promise<void> {
 
         await this.waitForCoursesToLoad();
@@ -382,9 +260,6 @@ export class ExploreCoursesPage extends BasePage {
     }
 
 
-    /*
-     * Verify Register does not exist.
-     */
     async verifyRegisterNotDisplayed(): Promise<void> {
 
         const registerButton = this.page.getByRole(
@@ -395,10 +270,6 @@ export class ExploreCoursesPage extends BasePage {
         expect(await registerButton.count()).toBe(0);
     }
 
-
-    /*
-     * Wait for course list
-     */
     private async waitForCoursesToLoad(): Promise<void> {
 
         await this.page.waitForLoadState("networkidle").catch(() => { });
@@ -407,9 +278,6 @@ export class ExploreCoursesPage extends BasePage {
     }
 
 
-    /*
-     * Expose counts for step definitions
-     */
     async getJoinTrainingCount(): Promise<number> {
         return await this.joinTrainingButtons.count();
     }

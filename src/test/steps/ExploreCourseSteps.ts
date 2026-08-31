@@ -1,25 +1,13 @@
-import {
-    When,
-    Then
-} from "@cucumber/cucumber";
-
+import {When,Then} from "@cucumber/cucumber";
 import { expect } from "@playwright/test";
-
 import { CustomWorld } from "../../main/support/CustomWorld";
 import { CSVReader } from "../../main/utils/csv_reader";
 import { logger } from "../../main/utils/logger";
 import { ExploreCourseData } from "../../main/types/ExploreCoursesData";
 
-const STEP_TIMEOUT = {
-    timeout: 60 * 1000
-};
+const STEP_TIMEOUT = {timeout: 60 * 1000};
 
-
-/*
- * Open Explore Courses
- */
-When(
-    'the learner clicks on "Explore Courses" from the dashboard header',
+When('the learner clicks on "Explore Courses" from the dashboard header',
     STEP_TIMEOUT,
     async function (this: CustomWorld) {
 
@@ -28,11 +16,7 @@ When(
 );
 
 
-/*
- * All tab
- */
-When(
-    'the learner clicks on the Explore Courses "All" tab',
+When('the learner clicks on the Explore Courses "All" tab',
     STEP_TIMEOUT,
     async function (this: CustomWorld) {
 
@@ -41,13 +25,6 @@ When(
 );
 
 
-/*
- * Joined tab
- *
- * FIX: was previously "Join" tab, which matched the wrong element in
- * the page object (it clicked the "Join Training" button on a course
- * card instead of the "Joined" tab). The real UI tab is "Joined".
- */
 When(
     'the learner clicks on the Explore Courses "Joined" tab',
     STEP_TIMEOUT,
@@ -58,9 +35,6 @@ When(
 );
 
 
-/*
- * Open tab
- */
 When(
     'the learner clicks on the Explore Courses "Open" tab',
     STEP_TIMEOUT,
@@ -70,10 +44,6 @@ When(
     }
 );
 
-
-/*
- * Verify All courses
- */
 Then(
     "all courses should be displayed",
     STEP_TIMEOUT,
@@ -83,10 +53,6 @@ Then(
     }
 );
 
-
-/*
- * Verify course statuses in All tab
- */
 Then(
     "every course should show Join Training, Already enrolled or Training is full status",
     STEP_TIMEOUT,
@@ -109,10 +75,6 @@ Then(
     }
 );
 
-
-/*
- * Read course name from CSV and search
- */
 When(
     "the learner enters the course name from test data in the search field",
     STEP_TIMEOUT,
@@ -140,10 +102,6 @@ When(
     }
 );
 
-
-/*
- * Verify searched course
- */
 Then(
     "the searched course should be displayed",
     STEP_TIMEOUT,
@@ -162,10 +120,6 @@ Then(
     }
 );
 
-
-/*
- * Verify current enrollment status
- */
 Then(
     "the learner should see the correct enrollment status for the searched course",
     STEP_TIMEOUT,
@@ -190,10 +144,6 @@ Then(
     }
 );
 
-
-/*
- * Join searched course only when Join Training is available
- */
 When(
     "the learner joins the searched course if Join Training is available",
     STEP_TIMEOUT,
@@ -204,9 +154,7 @@ When(
         }
 
         const courseName = this.courseName;
-
         const status = await this.exploreCoursesPage.getCourseStatus(courseName);
-
         this.courseStatus = status;
 
         logger.info(`Attempting to join course: ${courseName}`);
@@ -232,10 +180,6 @@ When(
     }
 );
 
-
-/*
- * Verify final enrollment status after join attempt
- */
 Then(
     "the searched course should show the correct final enrollment status",
     STEP_TIMEOUT,
@@ -244,9 +188,7 @@ Then(
         if (!this.courseName) {
             throw new Error("Course name was not loaded from test data");
         }
-
         const finalStatus = await this.exploreCoursesPage.getCourseStatus(this.courseName);
-
         this.courseStatus = finalStatus;
 
         logger.info(`Final status for ${this.courseName}: ${finalStatus}`);
@@ -258,10 +200,6 @@ Then(
     }
 );
 
-
-/*
- * Joined tab
- */
 Then(
     "only enrolled courses should be displayed",
     STEP_TIMEOUT,
@@ -271,10 +209,6 @@ Then(
     }
 );
 
-
-/*
- * Joined tab status
- */
 Then(
     'every course should show "Already enrolled" status',
     STEP_TIMEOUT,
@@ -283,7 +217,6 @@ Then(
         const alreadyEnrolledCount = await this.exploreCoursesPage.getAlreadyEnrolledCount();
         const joinTrainingCount = await this.exploreCoursesPage.getJoinTrainingCount();
         const fullCount = await this.exploreCoursesPage.getTrainingFullCount();
-
         expect(
             alreadyEnrolledCount,
             "Joined tab should contain at least one enrolled course"
@@ -301,10 +234,6 @@ Then(
     }
 );
 
-
-/*
- * Open tab
- */
 Then(
     "only courses available for joining should be displayed",
     STEP_TIMEOUT,
@@ -314,17 +243,11 @@ Then(
     }
 );
 
-
-/*
- * Open tab status
- */
 Then(
     'every course should show "Join Training"',
     STEP_TIMEOUT,
     async function (this: CustomWorld) {
-
         const count = await this.exploreCoursesPage.getJoinTrainingCount();
-
         expect(
             count,
             "Open tab should contain at least one Join Training course"
@@ -332,10 +255,6 @@ Then(
     }
 );
 
-
-/*
- * Already enrolled should not appear
- */
 Then(
     "Already enrolled courses should not be displayed",
     STEP_TIMEOUT,
@@ -347,10 +266,6 @@ Then(
     }
 );
 
-
-/*
- * Full courses should not appear
- */
 Then(
     "Training is full courses should not be displayed",
     STEP_TIMEOUT,
@@ -362,10 +277,6 @@ Then(
     }
 );
 
-
-/*
- * Register should not exist
- */
 Then(
     "Register option should not be displayed",
     STEP_TIMEOUT,
