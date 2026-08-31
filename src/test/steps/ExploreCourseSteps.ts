@@ -30,10 +30,6 @@ When(
 
 /*
  * All tab
- *
- * IMPORTANT:
- * This wording is intentionally different from
- * DiscussionSteps.ts to avoid multiple matching steps.
  */
 When(
     'the learner clicks on the Explore Courses "All" tab',
@@ -46,18 +42,18 @@ When(
 
 
 /*
- * Join tab
+ * Joined tab
  *
- * IMPORTANT:
- * This wording is intentionally different from
- * DiscussionSteps.ts to avoid multiple matching steps.
+ * FIX: was previously "Join" tab, which matched the wrong element in
+ * the page object (it clicked the "Join Training" button on a course
+ * card instead of the "Joined" tab). The real UI tab is "Joined".
  */
 When(
-    'the learner clicks on the Explore Courses "Join" tab',
+    'the learner clicks on the Explore Courses "Joined" tab',
     STEP_TIMEOUT,
     async function (this: CustomWorld) {
 
-        await this.exploreCoursesPage.clickJoinTab();
+        await this.exploreCoursesPage.clickJoinedTab();
     }
 );
 
@@ -96,36 +92,20 @@ Then(
     STEP_TIMEOUT,
     async function (this: CustomWorld) {
 
-        const joinTrainingCount =
-            await this.exploreCoursesPage.getJoinTrainingCount();
+        const joinTrainingCount = await this.exploreCoursesPage.getJoinTrainingCount();
+        const alreadyEnrolledCount = await this.exploreCoursesPage.getAlreadyEnrolledCount();
+        const fullCount = await this.exploreCoursesPage.getTrainingFullCount();
 
-        const alreadyEnrolledCount =
-            await this.exploreCoursesPage.getAlreadyEnrolledCount();
-
-        const fullCount =
-            await this.exploreCoursesPage.getTrainingFullCount();
-
-        const total =
-            joinTrainingCount +
-            alreadyEnrolledCount +
-            fullCount;
+        const total = joinTrainingCount + alreadyEnrolledCount + fullCount;
 
         expect(
             total,
             "At least one course with a valid enrollment status should be displayed"
         ).toBeGreaterThan(0);
 
-        logger.info(
-            `Join Training: ${joinTrainingCount}`
-        );
-
-        logger.info(
-            `Already enrolled: ${alreadyEnrolledCount}`
-        );
-
-        logger.info(
-            `Training is full: ${fullCount}`
-        );
+        logger.info(`Join Training: ${joinTrainingCount}`);
+        logger.info(`Already enrolled: ${alreadyEnrolledCount}`);
+        logger.info(`Training is full: ${fullCount}`);
     }
 );
 
@@ -138,39 +118,25 @@ When(
     STEP_TIMEOUT,
     async function (this: CustomWorld) {
 
-        const filePath =
-            "src/resources/data/exploreCourses.csv";
+        const filePath = "src/resources/data/exploreCourses.csv";
 
-        const testData =
-            CSVReader.getData<ExploreCourseData>(
-                filePath
-            );
+        const testData = CSVReader.getData<ExploreCourseData>(filePath);
 
         if (!testData.length) {
-            throw new Error(
-                "exploreCourses.csv does not contain test data"
-            );
+            throw new Error("exploreCourses.csv does not contain test data");
         }
 
-        const courseName =
-            testData[0].courseName;
+        const courseName = testData[0].courseName;
 
         if (!courseName) {
-            throw new Error(
-                "courseName is missing from exploreCourses.csv"
-            );
+            throw new Error("courseName is missing from exploreCourses.csv");
         }
 
-        this.courseName =
-            courseName;
+        this.courseName = courseName;
 
-        logger.info(
-            `Searching course from test data: ${courseName}`
-        );
+        logger.info(`Searching course from test data: ${courseName}`);
 
-        await this.exploreCoursesPage.searchCourse(
-            courseName
-        );
+        await this.exploreCoursesPage.searchCourse(courseName);
     }
 );
 
@@ -184,15 +150,10 @@ Then(
     async function (this: CustomWorld) {
 
         if (!this.courseName) {
-            throw new Error(
-                "Course name was not loaded from test data"
-            );
+            throw new Error("Course name was not loaded from test data");
         }
 
-        const displayed =
-            await this.exploreCoursesPage.isCourseDisplayed(
-                this.courseName
-            );
+        const displayed = await this.exploreCoursesPage.isCourseDisplayed(this.courseName);
 
         expect(
             displayed,
@@ -211,26 +172,15 @@ Then(
     async function (this: CustomWorld) {
 
         if (!this.courseName) {
-            throw new Error(
-                "Course name was not loaded from test data"
-            );
+            throw new Error("Course name was not loaded from test data");
         }
 
-        const status =
-            await this.exploreCoursesPage.getCourseStatus(
-                this.courseName
-            );
+        const status = await this.exploreCoursesPage.getCourseStatus(this.courseName);
 
-        this.courseStatus =
-            status;
+        this.courseStatus = status;
 
-        logger.info(
-            `Course: ${this.courseName}`
-        );
-
-        logger.info(
-            `Current status: ${status}`
-        );
+        logger.info(`Course: ${this.courseName}`);
+        logger.info(`Current status: ${status}`);
 
         expect([
             "Join Training",
@@ -243,10 +193,6 @@ Then(
 
 /*
  * Join searched course only when Join Training is available
- *
- * This is a WHEN step because the feature says:
- *
- * When the learner joins the searched course if Join Training is available
  */
 When(
     "the learner joins the searched course if Join Training is available",
@@ -254,64 +200,35 @@ When(
     async function (this: CustomWorld) {
 
         if (!this.courseName) {
-            throw new Error(
-                "Course name was not loaded from test data"
-            );
+            throw new Error("Course name was not loaded from test data");
         }
 
-        const courseName =
-            this.courseName;
+        const courseName = this.courseName;
 
-        const status =
-            await this.exploreCoursesPage.getCourseStatus(
-                courseName
-            );
+        const status = await this.exploreCoursesPage.getCourseStatus(courseName);
 
-        this.courseStatus =
-            status;
+        this.courseStatus = status;
 
-        logger.info(
-            `Attempting to join course: ${courseName}`
-        );
-
-        logger.info(
-            `Current course status: ${status}`
-        );
+        logger.info(`Attempting to join course: ${courseName}`);
+        logger.info(`Current course status: ${status}`);
 
         if (status === "Join Training") {
-
-            await this.exploreCoursesPage.clickJoinTraining(
-                courseName
-            );
-
-            logger.info(
-                `Join Training clicked for: ${courseName}`
-            );
-
+            await this.exploreCoursesPage.clickJoinTraining(courseName);
+            logger.info(`Join Training clicked for: ${courseName}`);
             return;
         }
 
         if (status === "Already enrolled") {
-
-            logger.info(
-                `${courseName} is already enrolled. No registration required.`
-            );
-
+            logger.info(`${courseName} is already enrolled. No registration required.`);
             return;
         }
 
         if (status === "Training is full") {
-
-            logger.info(
-                `${courseName} is full. Registration is not possible.`
-            );
-
+            logger.info(`${courseName} is full. Registration is not possible.`);
             return;
         }
 
-        throw new Error(
-            `Unexpected status for ${courseName}: ${status}`
-        );
+        throw new Error(`Unexpected status for ${courseName}: ${status}`);
     }
 );
 
@@ -325,22 +242,14 @@ Then(
     async function (this: CustomWorld) {
 
         if (!this.courseName) {
-            throw new Error(
-                "Course name was not loaded from test data"
-            );
+            throw new Error("Course name was not loaded from test data");
         }
 
-        const finalStatus =
-            await this.exploreCoursesPage.getCourseStatus(
-                this.courseName
-            );
+        const finalStatus = await this.exploreCoursesPage.getCourseStatus(this.courseName);
 
-        this.courseStatus =
-            finalStatus;
+        this.courseStatus = finalStatus;
 
-        logger.info(
-            `Final status for ${this.courseName}: ${finalStatus}`
-        );
+        logger.info(`Final status for ${this.courseName}: ${finalStatus}`);
 
         expect([
             "Already enrolled",
@@ -351,48 +260,43 @@ Then(
 
 
 /*
- * Join tab
+ * Joined tab
  */
 Then(
     "only enrolled courses should be displayed",
     STEP_TIMEOUT,
     async function (this: CustomWorld) {
 
-        await this.exploreCoursesPage.verifyJoinTabCourses();
+        await this.exploreCoursesPage.verifyJoinedTabCourses();
     }
 );
 
 
 /*
- * Join tab status
+ * Joined tab status
  */
 Then(
     'every course should show "Already enrolled" status',
     STEP_TIMEOUT,
     async function (this: CustomWorld) {
 
-        const alreadyEnrolledCount =
-            await this.exploreCoursesPage.getAlreadyEnrolledCount();
-
-        const joinTrainingCount =
-            await this.exploreCoursesPage.getJoinTrainingCount();
-
-        const fullCount =
-            await this.exploreCoursesPage.getTrainingFullCount();
+        const alreadyEnrolledCount = await this.exploreCoursesPage.getAlreadyEnrolledCount();
+        const joinTrainingCount = await this.exploreCoursesPage.getJoinTrainingCount();
+        const fullCount = await this.exploreCoursesPage.getTrainingFullCount();
 
         expect(
             alreadyEnrolledCount,
-            "Join tab should contain at least one enrolled course"
+            "Joined tab should contain at least one enrolled course"
         ).toBeGreaterThan(0);
 
         expect(
             joinTrainingCount,
-            "Join tab should not contain Join Training courses"
+            "Joined tab should not contain Join Training courses"
         ).toBe(0);
 
         expect(
             fullCount,
-            "Join tab should not contain full courses"
+            "Joined tab should not contain full courses"
         ).toBe(0);
     }
 );
@@ -419,8 +323,7 @@ Then(
     STEP_TIMEOUT,
     async function (this: CustomWorld) {
 
-        const count =
-            await this.exploreCoursesPage.getJoinTrainingCount();
+        const count = await this.exploreCoursesPage.getJoinTrainingCount();
 
         expect(
             count,
@@ -438,12 +341,9 @@ Then(
     STEP_TIMEOUT,
     async function (this: CustomWorld) {
 
-        const count =
-            await this.exploreCoursesPage.getAlreadyEnrolledCount();
+        const count = await this.exploreCoursesPage.getAlreadyEnrolledCount();
 
-        expect(
-            count
-        ).toBe(0);
+        expect(count).toBe(0);
     }
 );
 
@@ -456,12 +356,9 @@ Then(
     STEP_TIMEOUT,
     async function (this: CustomWorld) {
 
-        const count =
-            await this.exploreCoursesPage.getTrainingFullCount();
+        const count = await this.exploreCoursesPage.getTrainingFullCount();
 
-        expect(
-            count
-        ).toBe(0);
+        expect(count).toBe(0);
     }
 );
 
