@@ -5,13 +5,13 @@
   },
 
   "validLearner": {
-    "username": "testingteam5@gmail.com",
-    "password": "test5@123"
+    "username": "learner01@gmail.com",
+    "password": "Learner@123"
   },
 
   "validTrainer": {
-    "username": "light@gmail.com",
-    "password": "light@321"
+    "username": "trainer01@gmail.com",
+    "password": "trainer123"
   },
 
   "invalidCredentials": {
