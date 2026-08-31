@@ -11,7 +11,7 @@ export class SignUpPage extends BasePage {
     private signUpButton = this.page.locator('//button/span[text() = "Create Account"]');
     private termsOfServiceCheckBox = this.page.locator('//input[@class = "auth-checkbox"]');
     private signInLink = this.page.locator('//a[text() = "Sign in"]');
-    private strengthIndicator = this.page.locator('//input[@type = "password"]/following::div[1]/span');
+    private strengthIndicator = this.page.locator('//input[@type = "password"]/following::div[1]/div/span');
 
     async fillFullName(fullName: string) {
         logger.info(`Filling full name: ${fullName}`);

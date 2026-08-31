@@ -83,9 +83,9 @@ Feature: VIGNESHWARAN_M 24-08-2026 User Registration Feature
 
     Examples:
       | password     | strength |
-      | 12345        | Weak     |
-      | 123456       | Fair     |
-      | password123  | Good     |
+      | 123456       | Weak     |
+      | password123  | Fair     |
+      | Password123  | Good     |
       | Password@123 | Strong   |
 
   Scenario: User should be able to navigate to login page from registration page

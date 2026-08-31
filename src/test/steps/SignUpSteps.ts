@@ -11,7 +11,7 @@ Given('The user navigates to the registration page', async function (this: Custo
 
 When('The user enters valid details in the registration form', async function (this: CustomWorld, dataTable) {
     const data = dataTable.rowsHash();
-    const email = data.EmailAddress+`?${Date.now()}@example.com`;
+    const email = data.EmailAddress+`${Date.now()}@example.com`;
     await this.signUpPage.fillRegisterFormDetails(
         data.FullName,
         email,
@@ -39,7 +39,7 @@ When('The user leaves the {string} field empty', async function (this: CustomWor
 
 When('The user fills the remaining registration fields with valid details', async function (this: CustomWorld, dataTable) {
     const data = dataTable.rowsHash();
-    const email = data.EmailAddress+`?${Date.now()}@example.com`;
+    const email = data.EmailAddress+`${Date.now()}@example.com`;
     await this.signUpPage.fillRegisterFormDetails(
         data.FullName,
         email,
@@ -67,7 +67,7 @@ Then('The registration error message should be displayed as {string}', async fun
 
 When('The user enters valid registration details except password', async function (this: CustomWorld, dataTable) {
     const data = dataTable.rowsHash();
-    const email = data.EmailAddress+`?${Date.now()}@example.com`;
+    const email = data.EmailAddress+`${Date.now()}@example.com`;
     await this.signUpPage.fillRegisterFormDetails(
         data.FullName,
         email,
