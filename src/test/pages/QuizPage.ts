@@ -15,6 +15,11 @@ export class QuizPage extends BasePage {
     private firstCourseRow =
         this.page.locator(".wl-sidebar-course-item").first();
 
+    private courseByName = (courseName: string) =>
+        this.page.locator(".wl-sidebar-course-item", {
+            hasText: courseName
+        });
+
     private tab = (tabName: string) =>
         this.page.getByRole("tab", {
             name: tabName
@@ -96,6 +101,32 @@ export class QuizPage extends BasePage {
 
 
     // ================================
+    // Question Bank Search Locators
+    // ================================
+
+    private questionBankToggle =
+        this.page.locator(".cqt-bank-toggle");
+
+    private questionSearchInput =
+        this.page.getByPlaceholder(
+            "Search question text or source quiz…"
+        );
+
+    private searchResultsList =
+        this.page.locator('div[style*="max-height: 300px"]');
+
+    private searchResultItem = (questionText: string) =>
+        this.searchResultsList
+            .locator("> div")
+            .filter({
+                hasText: questionText
+            });
+    private noResultsMessage =
+    this.page.getByText(
+        "No questions found in this course's quizzes."
+    );
+
+    // ================================
     // Navigation Methods
     // ================================
 
@@ -118,6 +149,17 @@ export class QuizPage extends BasePage {
 
         await this.click(
             this.firstCourseRow
+        );
+    }
+
+    async selectCourseByName(courseName: string) {
+
+        logger.info(
+            `Selecting course: ${courseName}`
+        );
+
+        await this.click(
+            this.courseByName(courseName)
         );
     }
 
@@ -366,4 +408,82 @@ export class QuizPage extends BasePage {
 
         return await this.quizRows(quizTitle).count() > 0;
     }
+
+
+    // ================================
+    // Question Bank Search Methods
+    // ================================
+
+    async openQuestionBank() {
+
+        logger.info("Opening question bank");
+
+        await this.questionBankToggle.waitFor({
+            state: "visible",
+            timeout: 10000
+        });
+
+        const alreadyOpen =
+            await this.questionSearchInput.isVisible().catch(() => false);
+
+        if (!alreadyOpen) {
+
+            await this.questionBankToggle.scrollIntoViewIfNeeded();
+
+            await this.click(
+                this.questionBankToggle
+            );
+
+            await this.questionSearchInput.waitFor({
+                state: "visible",
+                timeout: 10000
+            });
+        }
+
+        logger.info("Question bank opened successfully");
+    }
+
+    async searchQuestionBank(keyword: string) {
+
+        logger.info(
+            `Searching question bank for: ${keyword}`
+        );
+
+        await this.fill(
+            this.questionSearchInput,
+            keyword
+        );
+    }
+
+    async isQuestionInResults(
+        questionText: string,
+        sourceQuiz: string
+    ) {
+        const result =
+            this.searchResultItem(questionText).first();
+
+        await result.waitFor({ state: "visible" });
+        await result.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(2500); // watch it settle here
+
+        const resultText = await result.textContent();
+        return resultText?.includes(`From: ${sourceQuiz}`) ?? false;
+    }
+    async isNoResultsMessageDisplayed() {
+
+    logger.info(
+        "Verifying 'No questions found' message is displayed"
+    );
+
+    await this.noResultsMessage.waitFor({
+        state: "visible",
+        timeout: 10000
+    });
+
+    await this.noResultsMessage.scrollIntoViewIfNeeded();
+
+    await this.page.waitForTimeout(2500); // watch it settle here
+
+    return await this.noResultsMessage.isVisible();
+}
 }

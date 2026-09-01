@@ -9,11 +9,10 @@ When(
         await this.quizPage.clickSidebarMenu(menuName);
     }
 );
-
 When(
-    'The trainer selects the course from the list',
-    async function (this: CustomWorld) {
-        await this.quizPage.selectFirstCourse();
+    'The trainer selects the course {string} from the list',
+    async function (this: CustomWorld, courseName: string) {
+        await this.quizPage.selectCourseByName(courseName);
     }
 );
 
@@ -102,5 +101,34 @@ Then(
             );
 
         expect(isPresent).toBe(false);
+    }
+);
+
+When(
+    'The trainer opens the question bank',
+    async function (this: CustomWorld) {
+        await this.quizPage.openQuestionBank();
+    }
+);
+
+When(
+    'The trainer searches the question bank for {string}',
+    async function (this: CustomWorld, keyword: string) {
+        await this.quizPage.searchQuestionBank(keyword);
+    }
+);
+
+Then(
+    'The search results should contain {string} from {string}',
+    async function (this: CustomWorld, questionText: string, sourceQuiz: string) {
+        const isPresent = await this.quizPage.isQuestionInResults(questionText, sourceQuiz);
+        expect(isPresent).toBe(true);
+    }
+);
+Then(
+    'The search results should show no questions found message',
+    async function (this: CustomWorld) {
+        const isDisplayed = await this.quizPage.isNoResultsMessageDisplayed();
+        expect(isDisplayed).toBe(true);
     }
 );
