@@ -16,7 +16,8 @@ import { LessonsPage } from '../../test/pages/Lessons/LessonsPage';
 import { MyProfilePage } from '../pages/MyProfilePage';
 import { DeleteConfirmationPage } from '../pages/Coding/DeleteConfirmationPage';
 import { LearnerMyCoursesPage } from '../pages/LearnerMycousePage';
-
+import { askOllama } from '../../main/utils/ollamaClient';
+import { analyzePlaywrightFailure } from '../../main/utils/ollamaClient';
 
 setDefaultTimeout(15000);
 
@@ -82,26 +83,167 @@ Before(async function (this: CustomWorld, scenario) {
 
 After(async function (this: CustomWorld, scenario) {
 
-    if (scenario.result?.status === "FAILED") {
+    try {
 
-        const screenshot = await this.page.screenshot({
-            fullPage: true
-        }); 
+        if (scenario.result?.status === "FAILED") {
 
-        this.attach(screenshot,"image/png");
+            logger.error(
+                `Scenario failed: ${scenario.pickle.name}`
+            );
 
-        const screenshotPath =
-            `reports/screenshots/${scenario.pickle.name}_${Date.now()}.png`;
+            const failureMessage =
+                scenario.result.message ||
+                "No failure message available.";
 
-        await this.page.screenshot({
-            path: screenshotPath,
-            fullPage: true
-        });
+            logger.error(
+                `Failure message: ${failureMessage}`
+            );
 
+
+            /* =====================================================
+               SCREENSHOT
+               ===================================================== */
+
+            const screenshot =
+                await this.page.screenshot({
+                    fullPage: true
+                });
+
+            this.attach(
+                screenshot,
+                "image/png"
+            );
+
+
+            const screenshotPath =
+                `reports/screenshots/${scenario.pickle.name}_${Date.now()}.png`;
+
+            await this.page.screenshot({
+                path: screenshotPath,
+                fullPage: true
+            });
+
+
+            /* =====================================================
+               COLLECT BROWSER INFORMATION
+               ===================================================== */
+
+            let currentUrl = "";
+            let pageTitle = "";
+
+            try {
+
+                currentUrl =
+                    this.page.url();
+
+                pageTitle =
+                    await this.page.title();
+
+            } catch {
+                currentUrl = "Unable to read URL";
+                pageTitle = "Unable to read page title";
+            }
+
+
+            /* =====================================================
+               OLLAMA ANALYSIS
+               ===================================================== */
+
+            logger.info(
+                "Sending failure information to Ollama..."
+            );
+
+            try {
+
+                const analysis =
+                    await analyzePlaywrightFailure(
+
+                        scenario.pickle.name,
+
+                        failureMessage,
+
+                        "src/test/steps/LearnerMyCourseSteps.ts",
+
+                        "src/test/pages/LearnerMycousePage.ts",
+
+                        `
+Current URL:
+${currentUrl}
+
+Page Title:
+${pageTitle}
+
+Scenario:
+${scenario.pickle.name}
+
+Failure:
+${failureMessage}
+`
+                    );
+
+
+                /* =================================================
+                   PRINT AI ANALYSIS
+                   ================================================= */
+
+                console.log("");
+                console.log(
+                    "======================================================"
+                );
+                console.log(
+                    "              OLLAMA AI FAILURE ANALYSIS"
+                );
+                console.log(
+                    "======================================================"
+                );
+
+                console.log(analysis);
+
+                console.log(
+                    "======================================================"
+                );
+                console.log("");
+
+
+                /*
+                 * Attach AI analysis to Cucumber report.
+                 */
+                this.attach(
+                    analysis,
+                    "text/plain"
+                );
+
+            } catch (ollamaError) {
+
+                logger.error(
+                    `Ollama analysis failed: ${String(ollamaError)}`
+                );
+
+                console.log(
+                    "Ollama analysis could not be completed."
+                );
+            }
+        }
+
+    } catch (error) {
+
+        /*
+         * Failure analysis must NEVER hide the original
+         * Playwright/Cucumber failure.
+         */
+        logger.error(
+            `Error during failure analysis: ${String(error)}`
+        );
+
+    } finally {
+
+        /* =====================================================
+           CLEANUP
+           ===================================================== */
+
+        await this.page.close();
+        await this.context.close();
     }
-
-    await this.page.close();
-    await this.context.close();
 });
 
 AfterAll(async () => {

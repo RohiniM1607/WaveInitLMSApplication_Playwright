@@ -27,13 +27,19 @@ export class LearnerMyCoursesPage extends BasePage {
         this.page.locator("table.tmt-table");
 
     /*
-     * Important:
-     * Do NOT use getByRole("heading") for course titles.
-     * The course title is a normal element inside the first table cell.
+     * Loading message displayed while courses are being fetched.
      */
-    private courseRows =
-        this.coursesTable.locator("tbody tr");
+    private loadingMessage =
+        this.page.getByText(
+            "Loading your assigned courses...",
+            {
+                exact: true
+            }
+        );
 
+    /*
+     * Message displayed when the search returns no courses.
+     */
     private noCoursesMessage =
         this.page.getByText(
             "No courses found matching your criteria",
@@ -41,6 +47,17 @@ export class LearnerMyCoursesPage extends BasePage {
                 exact: true
             }
         );
+
+    /*
+     * Course table rows.
+     */
+    private courseRows =
+        this.coursesTable.locator("tbody tr");
+
+
+    /* =========================================================
+       OPEN MY COURSES
+       ========================================================= */
 
     async openMyCourses(): Promise<void> {
 
@@ -64,13 +81,57 @@ export class LearnerMyCoursesPage extends BasePage {
             timeout: 30000
         });
 
-        /*
-         * Wait until the course table is rendered.
-         */
         await expect(this.coursesTable).toBeVisible({
             timeout: 30000
         });
+
+        /*
+         * Wait for initial course loading to finish.
+         */
+        await this.waitForCourseLoadingToFinish();
+
+        logger.info("My Courses page loaded successfully");
     }
+
+
+    /* =========================================================
+       WAIT FOR COURSE LOADING
+       ========================================================= */
+
+    private async waitForCourseLoadingToFinish(): Promise<void> {
+
+        /*
+         * If the loading message exists, wait until it disappears.
+         *
+         * We first check whether it is visible so we do not
+         * unnecessarily wait when the application has already
+         * completed loading.
+         */
+        const loadingVisible =
+            await this.loadingMessage
+                .isVisible()
+                .catch(() => false);
+
+        if (loadingVisible) {
+
+            logger.info(
+                "Course loading detected. Waiting for loading to finish..."
+            );
+
+            await expect(this.loadingMessage).toBeHidden({
+                timeout: 30000
+            });
+
+            logger.info(
+                "Course loading completed"
+            );
+        }
+    }
+
+
+    /* =========================================================
+       SEARCH COURSE
+       ========================================================= */
 
     async searchCourse(courseName: string): Promise<void> {
 
@@ -80,44 +141,86 @@ export class LearnerMyCoursesPage extends BasePage {
             timeout: 10000
         });
 
+        /*
+         * Clear the existing search value.
+         */
         await this.searchInput.fill("");
 
+        /*
+         * Enter the requested course.
+         */
         await this.searchInput.fill(courseName);
 
         /*
-         * Wait for the UI to process the search.
-         * Do not use an arbitrary 1 second wait as the main synchronization.
+         * IMPORTANT:
+         * Do not use a fixed wait such as:
+         *
+         * await page.waitForTimeout(500);
+         *
+         * The application may take more or less time to update.
+         *
+         * Wait for the actual loading state instead.
          */
-        await this.page.waitForTimeout(500);
+        await this.waitForCourseLoadingToFinish();
+
+        /*
+         * Give React/UI a chance to commit the final DOM state
+         * only when the loading indicator is not present.
+         *
+         * This is not used as the primary synchronization.
+         */
+        await expect(async () => {
+
+            const loadingVisible =
+                await this.loadingMessage
+                    .isVisible()
+                    .catch(() => false);
+
+            expect(
+                loadingVisible,
+                "Course list is still loading"
+            ).toBe(false);
+
+        }).toPass({
+            timeout: 30000,
+            intervals: [100, 250, 500]
+        });
 
         logger.info(`Search completed for: ${courseName}`);
     }
 
-    /**
-     * Returns all currently displayed course rows.
-     */
+
+    /* =========================================================
+       COURSE ROW COUNT
+       ========================================================= */
+
     async getCourseRowCount(): Promise<number> {
 
         return await this.courseRows.count();
     }
 
-    /**
-     * Gets the course title from one row.
-     *
-     * The first TD contains the course information.
-     * We look for the actual visible course-title element
-     * instead of depending on accessibility role="heading".
-     */
-    private async getCourseNameFromRow(rowIndex: number): Promise<string> {
 
-        const row = this.courseRows.nth(rowIndex);
+    /* =========================================================
+       GET COURSE NAME FROM ROW
+       ========================================================= */
 
-        const firstCell = row.locator("td").first();
+    private async getCourseNameFromRow(
+        rowIndex: number
+    ): Promise<string> {
+
+        const row =
+            this.courseRows.nth(rowIndex);
+
+        const firstCell =
+            row.locator("td").first();
 
         /*
          * Try semantic heading first.
          */
-        const heading = firstCell.locator("h1, h2, h3, h4, h5, h6").first();
+        const heading =
+            firstCell
+                .locator("h1, h2, h3, h4, h5, h6")
+                .first();
 
         if (await heading.count() > 0) {
 
@@ -130,22 +233,24 @@ export class LearnerMyCoursesPage extends BasePage {
         }
 
         /*
-         * Fallback:
-         * Find a direct visible text element that represents
-         * the course title.
-         *
-         * We remove known UI labels such as COURSE.
+         * Fallback to visible text elements.
          */
         const textElements =
             firstCell.locator("div, span, p, a");
 
-        const count = await textElements.count();
+        const count =
+            await textElements.count();
 
         for (let i = 0; i < count; i++) {
 
-            const element = textElements.nth(i);
+            const element =
+                textElements.nth(i);
 
-            if (!(await element.isVisible().catch(() => false))) {
+            if (
+                !(await element
+                    .isVisible()
+                    .catch(() => false))
+            ) {
                 continue;
             }
 
@@ -161,8 +266,7 @@ export class LearnerMyCoursesPage extends BasePage {
             }
 
             /*
-             * Ignore the description.
-             * Course title should normally be a short text value.
+             * Ignore descriptions and long text.
              */
             if (
                 text.length > 80 ||
@@ -177,10 +281,18 @@ export class LearnerMyCoursesPage extends BasePage {
         return "";
     }
 
-    /**
-     * Returns course names in the exact order displayed in UI.
-     */
+
+    /* =========================================================
+       GET ALL COURSE NAMES
+       ========================================================= */
+
     async getAllCourseNames(): Promise<string[]> {
+
+        /*
+         * Make sure the loading state has finished before
+         * reading the rows.
+         */
+        await this.waitForCourseLoadingToFinish();
 
         const count =
             await this.courseRows.count();
@@ -204,10 +316,33 @@ export class LearnerMyCoursesPage extends BasePage {
         return names;
     }
 
-    /**
-     * Checks whether a particular course is displayed.
-     */
-    async isCourseVisible(courseName: string): Promise<boolean> {
+
+    /* =========================================================
+       CHECK COURSE VISIBILITY
+       ========================================================= */
+
+    async isCourseVisible(
+        courseName: string
+    ): Promise<boolean> {
+
+        /*
+         * Wait for loading to finish before checking the
+         * course list.
+         */
+        await this.waitForCourseLoadingToFinish();
+
+        /*
+         * If no-course message is displayed, the course
+         * obviously cannot be present.
+         */
+        const noCoursesVisible =
+            await this.noCoursesMessage
+                .isVisible()
+                .catch(() => false);
+
+        if (noCoursesVisible) {
+            return false;
+        }
 
         const names =
             await this.getAllCourseNames();
@@ -219,13 +354,16 @@ export class LearnerMyCoursesPage extends BasePage {
         );
     }
 
-    /**
-     * Checks that exactly one course is displayed
-     * and that it is the expected course.
-     */
+
+    /* =========================================================
+       VERIFY ONLY EXPECTED COURSE
+       ========================================================= */
+
     async verifyOnlyCourseDisplayed(
         courseName: string
     ): Promise<void> {
+
+        await this.waitForCourseLoadingToFinish();
 
         const names =
             await this.getAllCourseNames();
@@ -236,20 +374,28 @@ export class LearnerMyCoursesPage extends BasePage {
         ).toEqual([courseName]);
     }
 
-    /**
-     * Checks the no-result state.
-     */
+
+    /* =========================================================
+       NO COURSE MESSAGE
+       ========================================================= */
+
     async isNoCoursesMessageVisible(): Promise<boolean> {
+
+        await this.waitForCourseLoadingToFinish();
 
         return await this.noCoursesMessage
             .isVisible()
             .catch(() => false);
     }
 
-    /**
-     * Verifies that no course rows exist.
-     */
+
+    /* =========================================================
+       VERIFY NO COURSES
+       ========================================================= */
+
     async verifyNoCoursesDisplayed(): Promise<void> {
+
+        await this.waitForCourseLoadingToFinish();
 
         const rowCount =
             await this.getCourseRowCount();
@@ -260,12 +406,18 @@ export class LearnerMyCoursesPage extends BasePage {
         ).toBe(0);
     }
 
-    /**
-     * Selects sorting option.
-     */
-    async sortBy(option: SortOption): Promise<void> {
 
-        logger.info(`Sorting courses by: ${option}`);
+    /* =========================================================
+       SORT COURSES
+       ========================================================= */
+
+    async sortBy(
+        option: SortOption
+    ): Promise<void> {
+
+        logger.info(
+            `Sorting courses by: ${option}`
+        );
 
         await expect(this.sortSelect).toBeVisible({
             timeout: 10000
@@ -274,16 +426,20 @@ export class LearnerMyCoursesPage extends BasePage {
         await this.sortSelect.selectOption(option);
 
         /*
-         * Wait for React/UI rendering to complete.
+         * Wait for any loading triggered by sorting.
          */
-        await this.page.waitForTimeout(500);
+        await this.waitForCourseLoadingToFinish();
 
-        logger.info(`Sort option selected: ${option}`);
+        logger.info(
+            `Sort option selected: ${option}`
+        );
     }
 
-    /**
-     * Returns the selected sort option.
-     */
+
+    /* =========================================================
+       GET SELECTED SORT
+       ========================================================= */
+
     async getSelectedSortOption(): Promise<string> {
 
         return await this.sortSelect.inputValue();
