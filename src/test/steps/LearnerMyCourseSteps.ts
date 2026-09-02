@@ -22,7 +22,8 @@ Given(
 
         if (linkName === "My Courses") {
 
-            await this.learnerMyCoursesPage.openMyCourses();
+            await this.learnerMyCoursesPage
+                .openMyCourses();
         }
     }
 );
@@ -81,9 +82,10 @@ Then(
         expectedResult: string
     ) {
 
-        /*
-         * INVALID COURSE
-         */
+        /* =====================================================
+           INVALID COURSE
+           ===================================================== */
+
         if (expectedResult === "No courses") {
 
             const noCoursesMessageVisible =
@@ -102,9 +104,10 @@ Then(
         }
 
 
-        /*
-         * VALID COURSE
-         */
+        /* =====================================================
+           VALID COURSE
+           ===================================================== */
+
         const isVisible =
             await this.learnerMyCoursesPage
                 .isCourseVisible(expectedResult);
@@ -115,13 +118,10 @@ Then(
         ).toBe(true);
 
 
-        /*
-         * IMPORTANT:
-         * Searching for Core Java must show ONLY Core Java.
-         *
-         * Searching for Java Selenium must show ONLY
-         * Java Selenium.
-         */
+        /* =====================================================
+           VERIFY ONLY EXPECTED COURSE
+           ===================================================== */
+
         await this.learnerMyCoursesPage
             .verifyOnlyCourseDisplayed(expectedResult);
     }
@@ -140,9 +140,8 @@ When(
         sortOption: string
     ) {
 
-        await this.learnerMyCoursesPage.sortBy(
-            sortOption as SortOption
-        );
+        await this.learnerMyCoursesPage
+            .sortBy(sortOption as SortOption);
     }
 );
 
@@ -165,22 +164,13 @@ Then(
             "No courses were displayed after sorting by newest"
         ).toBeGreaterThan(0);
 
-        /*
-         * We intentionally do NOT hardcode:
-         *
-         * Core Java -> playwright automation -> Java Selenium
-         *
-         * unless the application has fixed test data with
-         * guaranteed creation timestamps.
-         *
-         * The correct automation check is that the UI has
-         * accepted the newest option and displayed courses.
-         */
         const selectedSort =
             await this.learnerMyCoursesPage
                 .getSelectedSortOption();
 
-        expect(selectedSort).toBe("newest");
+        expect(
+            selectedSort
+        ).toBe("newest");
     }
 );
 
@@ -207,7 +197,9 @@ Then(
             await this.learnerMyCoursesPage
                 .getSelectedSortOption();
 
-        expect(selectedSort).toBe("oldest");
+        expect(
+            selectedSort
+        ).toBe("oldest");
     }
 );
 
@@ -251,6 +243,8 @@ Then(
             await this.learnerMyCoursesPage
                 .getSelectedSortOption();
 
-        expect(selectedSort).toBe("title");
+        expect(
+            selectedSort
+        ).toBe("title");
     }
 );
