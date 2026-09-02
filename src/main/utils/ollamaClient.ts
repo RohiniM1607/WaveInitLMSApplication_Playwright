@@ -2,7 +2,6 @@ import { readFile } from "fs/promises";
 
 const OLLAMA_URL = "http://localhost:11434/api/generate";
 const OLLAMA_MODEL = "qwen2.5-coder:7b";
-const OLLAMA_TIMEOUT = 30000;
 
 interface OllamaResponse {
     response: string;
@@ -18,12 +17,6 @@ async function readSourceFile(filePath: string): Promise<string> {
 
 export async function askOllama(prompt: string): Promise<string> {
 
-    const controller = new AbortController();
-
-    const timeout = setTimeout(() => {
-        controller.abort();
-    }, OLLAMA_TIMEOUT);
-
     try {
 
         const response = await fetch(OLLAMA_URL, {
@@ -37,9 +30,7 @@ export async function askOllama(prompt: string): Promise<string> {
                 model: OLLAMA_MODEL,
                 prompt,
                 stream: false
-            }),
-
-            signal: controller.signal
+            })
         });
 
         if (!response.ok) {
@@ -51,39 +42,32 @@ export async function askOllama(prompt: string): Promise<string> {
         const data =
             await response.json() as OllamaResponse;
 
-        return data.response?.trim() || "Ollama returned an empty response.";
+        return (
+            data.response?.trim() ||
+            "Ollama returned an empty response."
+        );
 
-    } finally {
+    } catch (error) {
 
-        clearTimeout(timeout);
+        throw new Error(
+            `Ollama request failed: ${String(error)}`
+        );
     }
 }
 
-
-/**
- * Analyze a failed Playwright/Cucumber scenario
- * using the actual Step Definition and Page Object source code.
- */
 export async function analyzePlaywrightFailure(
     scenarioName: string,
     failureMessage: string,
-    stepFilePath: string,
-    pageFilePath: string,
     observedLogs: string = ""
 ): Promise<string> {
-
-    const stepCode =
-        await readSourceFile(stepFilePath);
-
-    const pageCode =
-        await readSourceFile(pageFilePath);
 
     const prompt = `
 You are an expert Playwright, TypeScript and Cucumber test automation engineer.
 
-Your job is to DEBUG the failed automated test, not to give generic testing advice.
+Analyze the failed automated test using ONLY the information supplied below.
 
-Analyze the actual failure using the supplied error, logs, Step Definition and Page Object code.
+Do not give generic testing advice.
+Do not invent selectors, locators, methods, files, application behavior, or code.
 
 ==============================
 FAILED SCENARIO
@@ -98,50 +82,21 @@ FAILURE MESSAGE
 ${failureMessage}
 
 ==============================
-OBSERVED TEST LOGS
+OBSERVED LOGS
 ==============================
 
 ${observedLogs || "No additional logs were provided."}
 
 ==============================
-STEP DEFINITION CODE
+TASK
 ==============================
 
-File:
-${stepFilePath}
+Identify the most likely actual root cause from the available information.
 
-${stepCode}
-
-==============================
-PAGE OBJECT CODE
-==============================
-
-File:
-${pageFilePath}
-
-${pageCode}
-
-==============================
-YOUR TASK
-==============================
-
-Find the most likely ACTUAL root cause from the supplied code.
-
-Do NOT give generic answers such as:
-
-- Check the locator
-- Check timing
-- Check the browser
-- Add a wait
-
-unless the supplied code specifically proves that this is the problem.
-
-You must identify the exact method and code responsible when possible.
-
-Return the answer using exactly this structure:
+Return exactly:
 
 ROOT CAUSE:
-Explain the actual problem based on the supplied code and failure.
+Explain the most likely root cause.
 
 FAILURE TYPE:
 Choose one:
@@ -156,23 +111,36 @@ Choose one:
 - Other
 
 EXACT LOCATION:
-Give the file, method and relevant code that is causing the problem.
+Give the location only if it can be determined from the supplied information.
 
 CURRENT PROBLEMATIC CODE:
-Show only the relevant existing code.
+Use ONLY the actual source code supplied under
+"ACTUAL SOURCE CODE AROUND FAILURE".
 
 CORRECTED CODE:
-Provide the exact replacement code.
-
-WHY THIS FIX WORKS:
-Explain why the corrected code solves this specific failure.
-
-OTHER IMPACTED TESTS:
-Mention whether this change could affect other tests.
+Provide corrected code only when the supplied source code
+clearly shows the problem.
 
 IMPORTANT:
-Do not invent application behavior that is not supported by the supplied information.
-If the information is insufficient, clearly state what is missing.
+Do not invent selectors, locators, variables, methods,
+classes, assertions, or source code.
+
+The source code supplied in the prompt is the only source
+code you are allowed to analyze.
+
+WHY THIS FIX WORKS:
+Explain why the proposed fix solves the failure.
+
+OTHER IMPACTED TESTS:
+Mention possible impact on other tests only when it can be reasonably determined.
+
+IMPORTANT:
+1. Do not invent application behavior.
+2. Do not invent source code.
+3. Do not create selectors that were not supplied.
+4. If exact source code is unavailable, say:
+   "Exact source code is not available in the supplied information."
+5. If the root cause cannot be determined, clearly state what information is missing.
 `;
 
     return await askOllama(prompt);
