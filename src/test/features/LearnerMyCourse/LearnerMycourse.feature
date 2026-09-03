@@ -1,5 +1,5 @@
-@sowndariya
-Feature: My Courses (Learner) - Search and Sort Courses
+
+Feature: Sowndariya_01SEP2026_My Courses (Learner)- Search and Sort Courses
 
   As a learner
   I want to search my courses by title and sort them
