@@ -18,6 +18,7 @@ import { DeleteConfirmationPage } from '../pages/Coding/DeleteConfirmationPage';
 import { LearnerMyCoursesPage } from '../pages/LearnerMycousePage';
 import { analyzePlaywrightFailure } from '../../main/utils/ollamaClient';
 import { mkdir, writeFile, readFile } from "fs/promises";
+import { TrainingProgramPage } from '../../test/pages/TrainingProgramPage';
 
 let browser: Browser;
 setDefaultTimeout(30 * 1000);
@@ -77,6 +78,7 @@ Before(async function (this: CustomWorld, scenario) {
     this.learnerMyCoursesPage = new LearnerMyCoursesPage(this.page);
     this.myProfilePage = new MyProfilePage(this.page);
     this.deleteConfirmationPage = new DeleteConfirmationPage(this.page);
+    this.trainingProgramPage = new TrainingProgramPage(this.page);
 });
 
 

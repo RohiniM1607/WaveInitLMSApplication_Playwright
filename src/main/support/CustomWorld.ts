@@ -14,6 +14,7 @@ import { LessonsPage } from '../../test/pages/Lessons/LessonsPage';
 import { DeleteConfirmationPage } from '../../test/pages/Coding/DeleteConfirmationPage';
 import { DeleteCodingVar } from '../types/DeleteCodingVar';
 import { LearnerMyCoursesPage } from '../../test/pages/LearnerMycousePage';
+import { TrainingProgramPage } from '../../test/pages/TrainingProgramPage';
 
 export class CustomWorld extends World {
     browser!: Browser;
@@ -41,6 +42,7 @@ export class CustomWorld extends World {
     courseStatus?: string;
 learnerMyCoursesPage!: LearnerMyCoursesPage;
 searchedCourse?: string;
+trainingProgramPage!: TrainingProgramPage;
 }
 
 setWorldConstructor(CustomWorld);
