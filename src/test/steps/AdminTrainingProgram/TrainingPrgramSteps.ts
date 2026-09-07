@@ -1,8 +1,8 @@
 import { Given, When, Then } from "@cucumber/cucumber";
 import { expect } from "@playwright/test";
 
-import { CustomWorld } from "../../main/support/CustomWorld";
-import { TrainingProgramStatus } from "../pages/TrainingProgramPage";
+import { CustomWorld } from "../../../main/support/CustomWorld";
+import { TrainingProgramStatus } from "../../pages/AdminTrainingPragram/TrainingProgramPage";
 
 
 Given(

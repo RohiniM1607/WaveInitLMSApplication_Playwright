@@ -1,6 +1,6 @@
 import { expect, Locator } from "@playwright/test";
-import { logger } from "../../main/utils/logger";
-import { BasePage } from "./BasePage";
+import { logger } from "../../../main/utils/logger";
+import { BasePage } from "../BasePage";
 
 export type TrainingProgramStatus =
     | "Active"
@@ -23,6 +23,8 @@ export class TrainingProgramPage extends BasePage {
 };
 
     private trainingProgramRows = this.page.locator("tbody tr");
+
+    private searchInput = this.page.getByRole("textbox", { name: "Search by title or trainer..." });
 
     async navigateToTrainingProgram(): Promise<void> {
 
@@ -329,5 +331,99 @@ private async waitForExpectedStatus(
         }
 
         return true;
+    }
+
+    // ---------------------------------------------------------------------
+    // Add Training / search verification support
+    // ---------------------------------------------------------------------
+
+    async searchTrainingProgram(query: string): Promise<void> {
+        logger.info(`Searching training programs for "${query}"`);
+        await this.fill(this.searchInput, query);
+        await this.page.waitForTimeout(500);
+    }
+
+    private getRowsByTitle(title: string): Locator {
+        return this.trainingProgramRows.filter({ hasText: title });
+    }
+
+    async getRowCountByTitle(title: string): Promise<number> {
+        return await this.getRowsByTitle(title).count();
+    }
+
+    private parseDisplayedDate(text: string): Date | null {
+        const monthMap: Record<string, number> = {
+            jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+            jul: 6, aug: 7, sep: 8, sept: 8, oct: 9, nov: 10, dec: 11
+        };
+
+        const match = text.trim().match(/(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/);
+        if (!match) {
+            return null;
+        }
+
+        const day = parseInt(match[1], 10);
+        const monthKey = match[2].toLowerCase();
+        const year = parseInt(match[3], 10);
+
+        if (!(monthKey in monthMap)) {
+            return null;
+        }
+
+        return new Date(year, monthMap[monthKey], day);
+    }
+
+    private isSameCalendarDate(displayedText: string, expected: Date): boolean {
+        const parsed = this.parseDisplayedDate(displayedText);
+        if (!parsed) {
+            return false;
+        }
+        return (
+            parsed.getFullYear() === expected.getFullYear() &&
+            parsed.getMonth() === expected.getMonth() &&
+            parsed.getDate() === expected.getDate()
+        );
+    }
+
+    /**
+     * Compares the first row matching the given title against the details
+     * that were entered when the training session was created.
+     */
+    async doesRowMatchDetails(input: {
+        title: string;
+        trainerName: string;
+        capacity: string;
+        startDate: Date;
+        endDate: Date;
+    }): Promise<boolean> {
+        const row = this.getRowsByTitle(input.title).first();
+
+        if (!(await row.isVisible().catch(() => false))) {
+            logger.error(`No row found for title "${input.title}"`);
+            return false;
+        }
+
+        const cells = row.locator("td");
+        const trainerText = (await cells.nth(2).innerText()).trim();
+        const startDateText = (await cells.nth(3).innerText()).trim();
+        const endDateText = (await cells.nth(4).innerText()).trim();
+        const capacityText = (await cells.nth(5).innerText()).trim();
+
+        const trainerMatches = trainerText.toLowerCase().includes(input.trainerName.toLowerCase());
+        const capacityMatches = capacityText === input.capacity;
+        const startDateMatches = this.isSameCalendarDate(startDateText, input.startDate);
+        const endDateMatches = this.isSameCalendarDate(endDateText, input.endDate);
+
+        if (!trainerMatches || !capacityMatches || !startDateMatches || !endDateMatches) {
+            logger.error(
+                `Row mismatch for "${input.title}". ` +
+                `Trainer: expected match for "${input.trainerName}" got "${trainerText}". ` +
+                `Capacity: expected "${input.capacity}" got "${capacityText}". ` +
+                `Start date valid: ${startDateMatches} ("${startDateText}"). ` +
+                `End date valid: ${endDateMatches} ("${endDateText}").`
+            );
+        }
+
+        return trainerMatches && capacityMatches && startDateMatches && endDateMatches;
     }
 }

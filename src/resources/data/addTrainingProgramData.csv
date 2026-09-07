@@ -1,0 +1,5 @@
+testCaseId,title,description,trainerName,trainerEmail,capacity,expectedResult
+TC01,Node.js Fundamentals,Comprehensive overview of Node.js for backend development,trainer01,trainer01@gmail.com,25,valid
+TC02,,Title left blank to verify the mandatory field validation,trainer01,trainer01@gmail.com,25,invalid
+TC03,A,Single character title used to check the minimum length boundary,trainer01,trainer01@gmail.com,10,valid
+TC04,Data Science Bootcamp - Batch #7!!,Title containing special characters and numbers,trainer01,trainer01@gmail.com,40,valid

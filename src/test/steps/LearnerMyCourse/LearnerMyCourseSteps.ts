@@ -1,7 +1,7 @@
 import { Given, When, Then } from "@cucumber/cucumber";
 import { expect } from "@playwright/test";
-import { CustomWorld } from "../../main/support/CustomWorld";
-import { SortOption } from "../pages/LearnerMycousePage";
+import { CustomWorld } from "../../../main/support/CustomWorld";
+import { SortOption } from "../../pages/LearnerMyCourse/LearnerMycousePage";
 
 const STEP_TIMEOUT = {
     timeout: 60 * 1000
