@@ -48,13 +48,6 @@ export class QuizPage extends BasePage {
             "e.g. Module 2 Knowledge Check"
         );
 
-    /*
-     * Locate quiz question textareas.
-     *
-     * nth(index) is still used, but only against the
-     * question textarea collection instead of every
-     * textarea on the page.
-     */
     private questionTextarea = (index: number) =>
         this.page.locator(
             'textarea[placeholder*="question" i]'
@@ -387,10 +380,6 @@ export class QuizPage extends BasePage {
             this.confirmDeleteBtn
         );
 
-        /*
-         * Wait until the exact quiz row disappears
-         * from the DOM.
-         */
         await row.waitFor({
             state: "detached"
         });
@@ -400,11 +389,8 @@ export class QuizPage extends BasePage {
         quizTitle: string
     ) {
 
-        /*
-         * Give the table a chance to finish updating.
-         */
         await this.page.waitForLoadState("networkidle")
-            .catch(() => {});
+            .catch(() => { });
 
         return await this.quizRows(quizTitle).count() > 0;
     }

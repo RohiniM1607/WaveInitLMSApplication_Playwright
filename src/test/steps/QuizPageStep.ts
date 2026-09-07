@@ -50,8 +50,6 @@ When(
 
             const question = data.questions[i];
 
-            // First question already exists
-            // Additional questions need Add Question button
             if (i > 0) {
                 await this.quizPage.clickAddQuestion();
             }
@@ -81,6 +79,7 @@ Then(
         expect(quizRow.status).toBe(status);
     }
 );
+
 When(
     'The trainer deletes the quiz',
     async function (this: CustomWorld) {
