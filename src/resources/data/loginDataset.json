@@ -3,17 +3,14 @@
     "username": "admin@test.com",
     "password": "admin123"
   },
-
   "validLearner": {
     "username": "learner01@gmail.com",
     "password": "Learner@123"
   },
-
   "validTrainer": {
-    "username": "trainer01@gmail.com",
-    "password": "trainer123"
+    "username": "roshan@gmail.com",
+    "password": "roshan@321"
   },
-
   "invalidCredentials": {
     "username": "invalid_username",
     "password": "invalid_password"
