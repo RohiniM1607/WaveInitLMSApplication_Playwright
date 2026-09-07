@@ -3,7 +3,7 @@ import { BrowserContext, Browser, Page } from "@playwright/test";
 import { World, setWorldConstructor } from "@cucumber/cucumber";
 import { LoginPage } from "../../test/pages/LoginPage";
 import { QuizPage } from "../../test/pages/QuizPage";
-import { DiscussionPage } from "../../test/pages/DiscussionPage";
+import { DiscussionPage } from "../../test/pages/LearnerMyCourse/DiscussionPage";
 import { CodingPage } from '../../test/pages/Coding/CodingPage';
 import { SignUpPage } from '../../test/pages/SignUpPage';
 import { AssessmentGenerateWithAIPage } from '../../test/pages/Coding/AssessementGenerateWithAIPage';
@@ -13,7 +13,10 @@ import { MyProfilePage } from '../../test/pages/MyProfilePage';
 import { LessonsPage } from '../../test/pages/Lessons/LessonsPage';
 import { DeleteConfirmationPage } from '../../test/pages/Coding/DeleteConfirmationPage';
 import { DeleteCodingVar } from '../types/DeleteCodingVar';
-import { ExploreCoursesPage } from '../../test/pages/ExploreCoursesPage';
+import { LearnerMyCoursesPage } from '../../test/pages/LearnerMyCourse/LearnerMycousePage';
+import { TrainingProgramPage } from '../../test/pages/AdminTrainingPragram/TrainingProgramPage';
+import { AddTrainingProgramPage } from '../../test/pages/AdminTrainingPragram/AddTrainingProgramPage';
+import { TrainingProgramData } from '../types/TrainingProgramData';
 
 export class CustomWorld extends World {
     browser!: Browser;
@@ -37,9 +40,14 @@ export class CustomWorld extends World {
     myProfilePage!: MyProfilePage;
     deleteConfirmationPage!: DeleteConfirmationPage;
     deleteCodingVar!: DeleteCodingVar;
-    exploreCoursesPage!: ExploreCoursesPage;
     courseName?: string;
     courseStatus?: string;
+learnerMyCoursesPage!: LearnerMyCoursesPage;
+searchedCourse?: string;
+trainingProgramPage!: TrainingProgramPage;
+addTrainingProgramPage!: AddTrainingProgramPage;
+lastCreatedTraining?: TrainingProgramData & { startDate: Date; endDate: Date };
+duplicateBaseTraining?: TrainingProgramData & { startDate: Date; endDate: Date };
 }
 
 setWorldConstructor(CustomWorld);
