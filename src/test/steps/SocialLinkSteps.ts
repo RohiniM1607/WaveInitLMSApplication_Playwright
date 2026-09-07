@@ -2,7 +2,7 @@ import { expect } from 'playwright/test';
 import { Given, When, Then } from '@cucumber/cucumber';
 import { CustomWorld } from '../../main/support/CustomWorld';
 
-Given('The user navigates to the social link management page', async function (this: CustomWorld) {
+Given('The user navigates to the profile page', async function (this: CustomWorld) {
     await this.sidebarPage.clickMyProfileLink();
 });
 
