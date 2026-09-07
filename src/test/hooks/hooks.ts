@@ -6,7 +6,7 @@ import { logger } from '../../main/utils/logger';
 import { LoginPage } from '../pages/LoginPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { QuizPage } from '../pages/QuizPage';
-import { DiscussionPage } from '../pages/DiscussionPage';
+import { DiscussionPage } from '../pages/LearnerMyCourse/DiscussionPage';
 import { CodingPage } from '../pages/Coding/CodingPage';
 import { SignUpPage } from '../pages/SignUpPage';
 import { EditAssessmentPage } from '../pages/Coding/EditAssessmentPage';
@@ -15,10 +15,11 @@ import { AssessmentGenerateWithAIPage } from '../pages/Coding/AssessementGenerat
 import { LessonsPage } from '../../test/pages/Lessons/LessonsPage';
 import { MyProfilePage } from '../pages/MyProfilePage';
 import { DeleteConfirmationPage } from '../pages/Coding/DeleteConfirmationPage';
-import { LearnerMyCoursesPage } from '../pages/LearnerMycousePage';
+import { LearnerMyCoursesPage } from '../pages/LearnerMyCourse/LearnerMycousePage';
 import { analyzePlaywrightFailure } from '../../main/utils/ollamaClient';
 import { mkdir, writeFile, readFile } from "fs/promises";
-import { TrainingProgramPage } from '../../test/pages/TrainingProgramPage';
+import { TrainingProgramPage } from '../../test/pages/AdminTrainingPragram/TrainingProgramPage';
+import { AddTrainingProgramPage } from '../../test/pages/AdminTrainingPragram/AddTrainingProgramPage';
 
 let browser: Browser;
 setDefaultTimeout(30 * 1000);
@@ -79,6 +80,7 @@ Before(async function (this: CustomWorld, scenario) {
     this.myProfilePage = new MyProfilePage(this.page);
     this.deleteConfirmationPage = new DeleteConfirmationPage(this.page);
     this.trainingProgramPage = new TrainingProgramPage(this.page);
+    this.addTrainingProgramPage = new AddTrainingProgramPage(this.page);
 });
 
 

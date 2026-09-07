@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { logger } from "../../main/utils/logger";
-import { BasePage } from "../pages/BasePage";
+import { logger } from "../../../main/utils/logger";
+import { BasePage } from "../BasePage";
 
 export type SortOption = "newest" | "oldest" | "title";
 
