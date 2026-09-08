@@ -2,7 +2,15 @@ import { When, Then } from "@cucumber/cucumber";
 import { expect } from "playwright/test";
 import { CustomWorld } from "../../main/support/CustomWorld";
 import quizData from "../../resources/data/quizDataset.json";
-
+import loginData from "../../resources/data/loginDataset.json";
+When(
+    'The user enters valid username and password for {string}',
+    async function (this: CustomWorld, datasetKey: string) {
+        const testData = loginData[datasetKey as keyof typeof loginData];
+        await this.loginPage.fillUsername(testData.username);
+        await this.loginPage.fillPassword(testData.password);
+    }
+);
 When(
     'The trainer clicks on the {string} menu',
     async function (this: CustomWorld, menuName: string) {

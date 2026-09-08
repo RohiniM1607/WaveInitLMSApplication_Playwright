@@ -9,7 +9,7 @@ Feature: BALAMURUGAN 1st September 2026 - Search Question Bank
 
     Given The user launches the application
     When The user clicks the "Trainer" login button
-    And The user enters valid username and password
+        And The user enters valid username and password for "trainer1"
     And The user clicks the login button
     Then The dashboard header should be displayed with the text "Welcome back"
 
