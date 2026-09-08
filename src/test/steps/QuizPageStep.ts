@@ -12,6 +12,12 @@ When(
     }
 );
 When(
+    'The trainer selects the course from the list',
+    async function (this: CustomWorld) {
+        await this.quizPage.selectFirstCourse();
+    }
+);
+When(
     'The trainer clicks on the {string} menu',
     async function (this: CustomWorld, menuName: string) {
         await this.quizPage.clickSidebarMenu(menuName);

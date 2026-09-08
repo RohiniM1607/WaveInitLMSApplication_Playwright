@@ -115,9 +115,38 @@ export class QuizPage extends BasePage {
                 hasText: questionText
             });
     private noResultsMessage =
-    this.page.getByText(
-        "No questions found in this course's quizzes."
-    );
+        this.page.getByText(
+            "No questions found in this course's quizzes."
+        );
+
+    // ================================
+    // View Quiz Details Locators
+    // ================================
+
+    private detailsModal =
+        this.page.locator("div", {
+            hasText: "Back to Quizzes"
+        }).first();
+
+    private detailsModalCloseBtn =
+        this.detailsModal.locator('button:has(svg.lucide-x)').first();
+
+    private detailsModalTitle =
+        this.detailsModal.locator("h2");
+
+    private detailsModalBadge = (badgeText: string) =>
+        this.detailsModal.locator("span", {
+            hasText: badgeText
+        }).first();
+    private detailsModalStatValue = (label: string) =>
+        this.detailsModal
+            .locator(`div:text-is("${label}")`)
+            .locator("xpath=following-sibling::div[1]");
+    private detailsModalStatCard = (label: string) =>
+        this.detailsModal
+            .locator("div")
+            .filter({ hasText: label })
+            .last();
 
     // ================================
     // Navigation Methods
@@ -353,36 +382,19 @@ export class QuizPage extends BasePage {
     // Delete Quiz Methods
     // ================================
 
-    async deleteQuiz(
-        quizTitle: string
-    ) {
+    async deleteQuiz(quizTitle: string) {
+        logger.info(`Deleting quiz: ${quizTitle}`);
 
-        logger.info(
-            `Deleting quiz: ${quizTitle}`
-        );
+        const row = this.quizRow(quizTitle);
+        await row.waitFor({ state: "visible" });
 
-        const row =
-            this.quizRow(quizTitle);
-
-        await row.waitFor({
-            state: "visible"
+        this.page.once("dialog", async (dialog) => {
+            await dialog.accept();
         });
 
-        await this.click(
-            row.locator(".cqt-action-btn--delete")
-        );
+        await this.click(row.locator(".cqt-action-btn--delete"));
 
-        await this.confirmDeleteBtn.waitFor({
-            state: "visible"
-        });
-
-        await this.click(
-            this.confirmDeleteBtn
-        );
-
-        await row.waitFor({
-            state: "detached"
-        });
+        await row.waitFor({ state: "detached" });
     }
 
     async isQuizPresent(
@@ -457,19 +469,92 @@ export class QuizPage extends BasePage {
     }
     async isNoResultsMessageDisplayed() {
 
-    logger.info(
-        "Verifying 'No questions found' message is displayed"
-    );
+        logger.info(
+            "Verifying 'No questions found' message is displayed"
+        );
 
-    await this.noResultsMessage.waitFor({
-        state: "visible",
-        timeout: 10000
-    });
+        await this.noResultsMessage.waitFor({
+            state: "visible",
+            timeout: 10000
+        });
 
-    await this.noResultsMessage.scrollIntoViewIfNeeded();
+        await this.noResultsMessage.scrollIntoViewIfNeeded();
 
-    await this.page.waitForTimeout(2500); // watch it settle here
+        await this.page.waitForTimeout(2500); // watch it settle here
 
-    return await this.noResultsMessage.isVisible();
-}
+        return await this.noResultsMessage.isVisible();
+    }
+
+    // ================================
+    // View Quiz Details Methods
+    // ================================
+
+    async clickViewQuizDetails(quizTitle: string) {
+
+        logger.info(
+            `Viewing details for quiz: ${quizTitle}`
+        );
+
+        const row = this.quizRow(quizTitle);
+        await row.waitFor({ state: "visible" });
+
+        await this.click(
+            row.locator('button[title="View Quiz Details"]')
+        );
+
+        await this.detailsModal.waitFor({
+            state: "visible"
+        });
+    }
+
+    async getDetailsModalTitle() {
+
+        return (
+            await this.detailsModalTitle.textContent()
+        )?.trim();
+    }
+
+    async isDetailsModalStatusDisplayed(
+        questionCount: string,
+        status: string
+    ) {
+
+        const badgeVisible =
+            await this.detailsModalBadge(status).isVisible();
+
+        const questionText =
+            await this.detailsModal
+                .getByText(`${questionCount} question(s)`)
+                .isVisible();
+
+        return badgeVisible && questionText;
+    }
+
+    async getDetailsModalStatValue(label: string) {
+
+        const valueLocator =
+            this.detailsModalStatValue(label);
+
+        await valueLocator.waitFor({ state: "visible" });
+
+        const value = await valueLocator.textContent();
+
+        return value?.trim();
+    }
+
+    async closeDetailsModal() {
+
+        logger.info(
+            "Closing quiz details modal"
+        );
+
+        await this.click(
+            this.detailsModalCloseBtn
+        );
+
+        await this.detailsModal.waitFor({
+            state: "detached"
+        });
+    }
+
 }
