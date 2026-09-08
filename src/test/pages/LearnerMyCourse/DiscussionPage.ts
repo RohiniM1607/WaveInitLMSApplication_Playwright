@@ -1,6 +1,6 @@
 import { expect, Locator } from "playwright/test";
-import { logger } from "../../main/utils/logger";
-import { BasePage } from "./BasePage";
+import { logger } from "../../../main/utils/logger";
+import { BasePage } from "../BasePage";
 
 export class DiscussionPage extends BasePage {
 

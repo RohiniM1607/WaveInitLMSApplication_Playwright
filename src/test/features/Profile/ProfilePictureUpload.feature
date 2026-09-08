@@ -8,7 +8,7 @@ Feature: VIGNESHWARAN_M 01-09-2026 Profile Picture Upload Feature
     Background: User is on the profile picture upload page
         Given The user launches the application
         And the user logs in with "Trainer" role
-        And The user navigates to the social link management page
+        And The user navigates to the profile page
     
     Scenario: User should be able to upload a valid profile picture
         When The user clicks on the camera icon in the profile picture section

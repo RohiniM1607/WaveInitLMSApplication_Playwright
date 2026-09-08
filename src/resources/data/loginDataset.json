@@ -8,6 +8,10 @@
     "password": "Learner@123"
   },
   "validTrainer": {
+    "username": "trainer05@gmail.com",
+    "password": "trainer123"
+  },
+  "trainer1":{
     "username": "roshan@gmail.com",
     "password": "roshan@321"
   },

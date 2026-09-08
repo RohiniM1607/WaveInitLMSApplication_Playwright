@@ -1,8 +1,8 @@
 import { Given, When, Then } from "@cucumber/cucumber";
 import { expect } from "@playwright/test";
-import { CustomWorld } from "../../main/support/CustomWorld";
-import { CSVReader } from "../../main/utils/csv_reader";
-import discussionData from "../../resources/data/discussionData.json";
+import { CustomWorld } from "../../../main/support/CustomWorld";
+import { CSVReader } from "../../../main/utils/csv_reader";
+import discussionData from "../../../resources/data/discussionData.json";
 
 const STEP_TIMEOUT = { timeout: 60 * 1000 };
 
