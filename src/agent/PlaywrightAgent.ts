@@ -1,7 +1,4 @@
-import {
-    OllamaClient,
-    OllamaMessage
-} from '../main/utils/OllamaClient';
+import { OllamaClient, OllamaMessage} from '../main/utils/OllamaClient';
 
 import {
     PlaywrightMCPClient
