@@ -15,6 +15,11 @@ export class QuizPage extends BasePage {
     private firstCourseRow =
         this.page.locator(".wl-sidebar-course-item").first();
 
+    private courseByName = (courseName: string) =>
+        this.page.locator(".wl-sidebar-course-item", {
+            hasText: courseName
+        });
+
     private tab = (tabName: string) =>
         this.page.getByRole("tab", {
             name: tabName
@@ -43,13 +48,6 @@ export class QuizPage extends BasePage {
             "e.g. Module 2 Knowledge Check"
         );
 
-    /*
-     * Locate quiz question textareas.
-     *
-     * nth(index) is still used, but only against the
-     * question textarea collection instead of every
-     * textarea on the page.
-     */
     private questionTextarea = (index: number) =>
         this.page.locator(
             'textarea[placeholder*="question" i]'
@@ -96,6 +94,61 @@ export class QuizPage extends BasePage {
 
 
     // ================================
+    // Question Bank Search Locators
+    // ================================
+
+    private questionBankToggle =
+        this.page.locator(".cqt-bank-toggle");
+
+    private questionSearchInput =
+        this.page.getByPlaceholder(
+            "Search question text or source quiz…"
+        );
+
+    private searchResultsList =
+        this.page.locator('div[style*="max-height: 300px"]');
+
+    private searchResultItem = (questionText: string) =>
+        this.searchResultsList
+            .locator("> div")
+            .filter({
+                hasText: questionText
+            });
+    private noResultsMessage =
+        this.page.getByText(
+            "No questions found in this course's quizzes."
+        );
+
+    // ================================
+    // View Quiz Details Locators
+    // ================================
+
+    private detailsModal =
+        this.page.locator("div", {
+            hasText: "Back to Quizzes"
+        }).first();
+
+    private detailsModalCloseBtn =
+        this.detailsModal.locator('button:has(svg.lucide-x)').first();
+
+    private detailsModalTitle =
+        this.detailsModal.locator("h2");
+
+    private detailsModalBadge = (badgeText: string) =>
+        this.detailsModal.locator("span", {
+            hasText: badgeText
+        }).first();
+    private detailsModalStatValue = (label: string) =>
+        this.detailsModal
+            .locator(`div:text-is("${label}")`)
+            .locator("xpath=following-sibling::div[1]");
+    private detailsModalStatCard = (label: string) =>
+        this.detailsModal
+            .locator("div")
+            .filter({ hasText: label })
+            .last();
+
+    // ================================
     // Navigation Methods
     // ================================
 
@@ -118,6 +171,17 @@ export class QuizPage extends BasePage {
 
         await this.click(
             this.firstCourseRow
+        );
+    }
+
+    async selectCourseByName(courseName: string) {
+
+        logger.info(
+            `Selecting course: ${courseName}`
+        );
+
+        await this.click(
+            this.courseByName(courseName)
         );
     }
 
@@ -318,52 +382,179 @@ export class QuizPage extends BasePage {
     // Delete Quiz Methods
     // ================================
 
-    async deleteQuiz(
-        quizTitle: string
-    ) {
+    async deleteQuiz(quizTitle: string) {
+        logger.info(`Deleting quiz: ${quizTitle}`);
 
-        logger.info(
-            `Deleting quiz: ${quizTitle}`
-        );
+        const row = this.quizRow(quizTitle);
+        await row.waitFor({ state: "visible" });
 
-        const row =
-            this.quizRow(quizTitle);
-
-        await row.waitFor({
-            state: "visible"
+        this.page.once("dialog", async (dialog) => {
+            await dialog.accept();
         });
 
-        await this.click(
-            row.locator(".cqt-action-btn--delete")
-        );
+        await this.click(row.locator(".cqt-action-btn--delete"));
 
-        await this.confirmDeleteBtn.waitFor({
-            state: "visible"
-        });
-
-        await this.click(
-            this.confirmDeleteBtn
-        );
-
-        /*
-         * Wait until the exact quiz row disappears
-         * from the DOM.
-         */
-        await row.waitFor({
-            state: "detached"
-        });
+        await row.waitFor({ state: "detached" });
     }
 
     async isQuizPresent(
         quizTitle: string
     ) {
 
-        /*
-         * Give the table a chance to finish updating.
-         */
         await this.page.waitForLoadState("networkidle")
-            .catch(() => {});
+            .catch(() => { });
 
         return await this.quizRows(quizTitle).count() > 0;
     }
+
+
+    // ================================
+    // Question Bank Search Methods
+    // ================================
+
+    async openQuestionBank() {
+
+        logger.info("Opening question bank");
+
+        await this.questionBankToggle.waitFor({
+            state: "visible",
+            timeout: 10000
+        });
+
+        const alreadyOpen =
+            await this.questionSearchInput.isVisible().catch(() => false);
+
+        if (!alreadyOpen) {
+
+            await this.questionBankToggle.scrollIntoViewIfNeeded();
+
+            await this.click(
+                this.questionBankToggle
+            );
+
+            await this.questionSearchInput.waitFor({
+                state: "visible",
+                timeout: 10000
+            });
+        }
+
+        logger.info("Question bank opened successfully");
+    }
+
+    async searchQuestionBank(keyword: string) {
+
+        logger.info(
+            `Searching question bank for: ${keyword}`
+        );
+
+        await this.fill(
+            this.questionSearchInput,
+            keyword
+        );
+    }
+
+    async isQuestionInResults(
+        questionText: string,
+        sourceQuiz: string
+    ) {
+        const result =
+            this.searchResultItem(questionText).first();
+
+        await result.waitFor({ state: "visible" });
+        await result.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(2500); // watch it settle here
+
+        const resultText = await result.textContent();
+        return resultText?.includes(`From: ${sourceQuiz}`) ?? false;
+    }
+    async isNoResultsMessageDisplayed() {
+
+        logger.info(
+            "Verifying 'No questions found' message is displayed"
+        );
+
+        await this.noResultsMessage.waitFor({
+            state: "visible",
+            timeout: 10000
+        });
+
+        await this.noResultsMessage.scrollIntoViewIfNeeded();
+
+        await this.page.waitForTimeout(2500); // watch it settle here
+
+        return await this.noResultsMessage.isVisible();
+    }
+
+    // ================================
+    // View Quiz Details Methods
+    // ================================
+
+    async clickViewQuizDetails(quizTitle: string) {
+
+        logger.info(
+            `Viewing details for quiz: ${quizTitle}`
+        );
+
+        const row = this.quizRow(quizTitle);
+        await row.waitFor({ state: "visible" });
+
+        await this.click(
+            row.locator('button[title="View Quiz Details"]')
+        );
+
+        await this.detailsModal.waitFor({
+            state: "visible"
+        });
+    }
+
+    async getDetailsModalTitle() {
+
+        return (
+            await this.detailsModalTitle.textContent()
+        )?.trim();
+    }
+
+    async isDetailsModalStatusDisplayed(
+        questionCount: string,
+        status: string
+    ) {
+
+        const badgeVisible =
+            await this.detailsModalBadge(status).isVisible();
+
+        const questionText =
+            await this.detailsModal
+                .getByText(`${questionCount} question(s)`)
+                .isVisible();
+
+        return badgeVisible && questionText;
+    }
+
+    async getDetailsModalStatValue(label: string) {
+
+        const valueLocator =
+            this.detailsModalStatValue(label);
+
+        await valueLocator.waitFor({ state: "visible" });
+
+        const value = await valueLocator.textContent();
+
+        return value?.trim();
+    }
+
+    async closeDetailsModal() {
+
+        logger.info(
+            "Closing quiz details modal"
+        );
+
+        await this.click(
+            this.detailsModalCloseBtn
+        );
+
+        await this.detailsModal.waitFor({
+            state: "detached"
+        });
+    }
+
 }
