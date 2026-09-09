@@ -1,5 +1,5 @@
 import {Given, When, Then} from '@cucumber/cucumber'
-import { CustomWorld } from '../../main/support/CustomWorld';
+import { CustomWorld } from '../../../main/support/CustomWorld';
 import { expect } from 'playwright/test';
 import { time } from 'node:console';
 
