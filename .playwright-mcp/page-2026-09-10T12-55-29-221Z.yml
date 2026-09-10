@@ -1,0 +1,37 @@
+- generic [ref=e6]:
+  - generic [ref=e7]:
+    - generic [ref=e8]: WAVE INIT LMS
+    - generic [ref=e14]:
+      - heading "Empower Learning. Enable Growth. Welcome to Wave Init LMS" [level=1] [ref=e15]: Empower Learning.Enable Growth.Welcome to Wave Init LMS
+      - paragraph [ref=e16]: A smart learning platform to create, deliver, assess and track learning outcomes in one place.
+      - generic [ref=e17]:
+        - img "Wave Init LMS Interactive Classroom"
+  - generic [ref=e23]:
+    - generic [ref=e24]:
+      - heading "Welcome Back" [level=2] [ref=e25]
+      - paragraph [ref=e26]: Sign in to continue to your workspace
+    - tablist [ref=e27]:
+      - tab "Admin" [active] [selected] [ref=e28] [cursor=pointer]
+      - tab "Trainer" [ref=e33] [cursor=pointer]
+      - tab "Learner" [ref=e37] [cursor=pointer]
+    - generic [ref=e42]:
+      - generic [ref=e43]:
+        - generic [ref=e44]: Username or Email
+        - textbox "Username or Email" [ref=e46]:
+          - /placeholder: Enter your email
+      - generic [ref=e47]:
+        - generic [ref=e48]: Password
+        - generic [ref=e49]:
+          - textbox "Password" [ref=e50]:
+            - /placeholder: Enter your password
+          - button "Show password" [ref=e51] [cursor=pointer]
+      - generic [ref=e55]:
+        - generic [ref=e56]:
+          - checkbox "Remember me" [ref=e57] [cursor=pointer]
+          - generic [ref=e58] [cursor=pointer]: Remember me
+        - button "Forgot password?" [ref=e59] [cursor=pointer]
+      - button "Sign in as Admin" [ref=e92] [cursor=pointer]
+    - generic [ref=e64]:
+      - generic [ref=e65]: Your data is protected with enterprise-grade security
+      - link "Privacy Policy" [ref=e70] [cursor=pointer]:
+        - /url: /privacy
