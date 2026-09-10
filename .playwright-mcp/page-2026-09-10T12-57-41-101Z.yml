@@ -1,0 +1,73 @@
+- generic [ref=e2]:
+  - generic [ref=e96]:
+    - link "Skip to main content" [ref=e97] [cursor=pointer]:
+      - /url: "#main-content"
+    - link "Skip to navigation" [ref=e98] [cursor=pointer]:
+      - /url: "#sidebar-nav"
+    - complementary [ref=e99]:
+      - generic [ref=e100]:
+        - generic [ref=e107] [cursor=pointer]:
+          - generic [ref=e108]: WAVE INIT LMS
+          - generic [ref=e109]: Admin Portal
+        - navigation [ref=e110]:
+          - generic [ref=e111]:
+            - generic [ref=e112]: OVERVIEW
+            - button "Dashboard" [ref=e114] [cursor=pointer]
+          - generic [ref=e122]:
+            - generic [ref=e123]: MANAGEMENT
+            - button "Training Programs" [ref=e125] [cursor=pointer]
+            - button "Trainers" [ref=e131] [cursor=pointer]
+            - button "Participants" [ref=e139] [cursor=pointer]
+          - generic [ref=e147]:
+            - generic [ref=e148]: ACADEMICS & FEEDBACK
+            - button "Attendance Center" [ref=e150] [cursor=pointer]
+            - button "Feedback & Sentiment" [ref=e156] [cursor=pointer]
+          - generic [ref=e161]:
+            - generic [ref=e162]: INTERVIEWS
+            - button "Interviews" [ref=e164] [cursor=pointer]
+          - generic [ref=e170]:
+            - generic [ref=e171]: ANALYTICS
+            - button "Reports & Analytics" [ref=e173] [cursor=pointer]
+      - button "SR Sriram Admin · Online" [ref=e179] [cursor=pointer]:
+        - generic [ref=e180]: SR
+        - generic [ref=e181]:
+          - generic [ref=e182]: Sriram
+          - generic [ref=e183]: Admin · Online
+    - main "Training Programs" [ref=e563]:
+      - generic [ref=e189]: Manage all training programs
+      - generic [ref=e564]:
+        - generic [ref=e565]:
+          - generic [ref=e569]:
+            - heading "Training Sessions" [level=2] [ref=e570]
+            - paragraph [ref=e571]: Manage scheduled training programs, enrollments, and status
+          - button "Add Training" [ref=e572] [cursor=pointer]
+        - generic [ref=e574]:
+          - generic [ref=e578]:
+            - generic [ref=e579]: "10"
+            - generic [ref=e580]: Total
+          - generic [ref=e585]:
+            - generic [ref=e586]: "0"
+            - generic [ref=e587]: Active
+          - generic [ref=e592]:
+            - generic [ref=e593]: "10"
+            - generic [ref=e594]: Upcoming
+          - generic [ref=e600]:
+            - generic [ref=e601]: "0"
+            - generic [ref=e602]: Completed
+        - generic [ref=e603]:
+          - textbox "Search by title or trainer..." [ref=e608]
+          - generic [ref=e609]:
+            - button "All 10" [ref=e610] [cursor=pointer]:
+              - text: All
+              - generic [ref=e611]: "10"
+            - button "Active" [ref=e612] [cursor=pointer]
+            - button "Upcoming 10" [ref=e613] [cursor=pointer]:
+              - text: Upcoming
+              - generic [ref=e614]: "10"
+            - button "Completed" [ref=e615] [cursor=pointer]
+        - paragraph [ref=e1100]: Loading trainings...
+  - generic [ref=e1103]:
+    - generic [ref=e1107]:
+      - generic [ref=e1108]: Training deleted successfully
+      - generic [ref=e1109]: The training session has been removed.
+    - button "Close notification" [ref=e1110] [cursor=pointer]
