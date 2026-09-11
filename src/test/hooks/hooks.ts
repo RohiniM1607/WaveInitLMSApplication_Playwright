@@ -16,7 +16,6 @@ import { LessonsPage } from '../../test/pages/Lessons/LessonsPage';
 import { MyProfilePage } from '../pages/MyProfilePage';
 import { DeleteConfirmationPage } from '../pages/Coding/DeleteConfirmationPage';
 import { LearnerMyCoursesPage } from '../pages/LearnerMyCourse/LearnerMycousePage';
-import { mkdir, writeFile, readFile } from "fs/promises";
 import { TrainingProgramPage } from '../../test/pages/AdminTrainingPragram/TrainingProgramPage';
 import { AddTrainingProgramPage } from '../../test/pages/AdminTrainingPragram/AddTrainingProgramPage';
 
@@ -83,63 +82,6 @@ Before(async function (this: CustomWorld, scenario) {
 });
 
 
-function extractSourceLocation(
-    failureMessage: string
-): {
-    filePath: string;
-    line: number;
-    column: number;
-} | null {
-
-    const regex =
-        /([A-Za-z]:\\[^()\r\n]*?\.ts):(\d+):(\d+)/g;
-
-    const matches =
-        [...failureMessage.matchAll(regex)];
-
-    if (matches.length === 0) {
-        return null;
-    }
-
-    const userSource =
-        matches.find(
-            match =>
-                !match[1].includes("node_modules")
-        );
-
-    if (!userSource) {
-        return null;
-    }
-
-    return {
-        filePath: userSource[1],
-        line: Number(userSource[2]),
-        column: Number(userSource[3])
-    };
-}
-
-
-async function getSourceCodeAroundFailure(filePath: string,line: number): Promise<string> {
-    try {
-        const source = await readFile(filePath, "utf-8");
-        const lines = source.split(/\r?\n/);
-        const start = Math.max(0, line - 11);
-        const end = Math.min(lines.length, line + 10);
-        return lines
-            .slice(start, end)
-            .map(
-                (content, index) =>
-                    `${start + index + 1}: ${content}`
-            )
-            .join("\n");
-    } catch (error) {
-        return `
-Unable to read source file.
-File: ${filePath}
-Line: ${line}
-Error: ${String(error)}
-`;}
-}
 
 After(async function (this: CustomWorld, scenario) {
     try {
