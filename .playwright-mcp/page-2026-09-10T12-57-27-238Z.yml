@@ -1,0 +1,276 @@
+- generic [ref=e96]:
+  - link "Skip to main content" [ref=e97] [cursor=pointer]:
+    - /url: "#main-content"
+  - link "Skip to navigation" [ref=e98] [cursor=pointer]:
+    - /url: "#sidebar-nav"
+  - complementary [ref=e99]:
+    - generic [ref=e100]:
+      - generic [ref=e107] [cursor=pointer]:
+        - generic [ref=e108]: WAVE INIT LMS
+        - generic [ref=e109]: Admin Portal
+      - navigation [ref=e110]:
+        - generic [ref=e111]:
+          - generic [ref=e112]: OVERVIEW
+          - button "Dashboard" [ref=e114] [cursor=pointer]
+        - generic [ref=e122]:
+          - generic [ref=e123]: MANAGEMENT
+          - button "Training Programs" [ref=e125] [cursor=pointer]
+          - button "Trainers" [ref=e131] [cursor=pointer]
+          - button "Participants" [ref=e139] [cursor=pointer]
+        - generic [ref=e147]:
+          - generic [ref=e148]: ACADEMICS & FEEDBACK
+          - button "Attendance Center" [ref=e150] [cursor=pointer]
+          - button "Feedback & Sentiment" [ref=e156] [cursor=pointer]
+        - generic [ref=e161]:
+          - generic [ref=e162]: INTERVIEWS
+          - button "Interviews" [ref=e164] [cursor=pointer]
+        - generic [ref=e170]:
+          - generic [ref=e171]: ANALYTICS
+          - button "Reports & Analytics" [ref=e173] [cursor=pointer]
+    - button "SR Sriram Admin · Online" [ref=e179] [cursor=pointer]:
+      - generic [ref=e180]: SR
+      - generic [ref=e181]:
+        - generic [ref=e182]: Sriram
+        - generic [ref=e183]: Admin · Online
+  - main "Training Programs" [ref=e563]:
+    - generic [ref=e189]: Manage all training programs
+    - generic [ref=e191]:
+      - generic [ref=e564]:
+        - generic [ref=e565]:
+          - generic [ref=e569]:
+            - heading "Training Sessions" [level=2] [ref=e570]
+            - paragraph [ref=e571]: Manage scheduled training programs, enrollments, and status
+          - button "Add Training" [ref=e572] [cursor=pointer]
+        - generic [ref=e574]:
+          - generic [ref=e578]:
+            - generic [ref=e579]: "10"
+            - generic [ref=e580]: Total
+          - generic [ref=e585]:
+            - generic [ref=e586]: "0"
+            - generic [ref=e587]: Active
+          - generic [ref=e592]:
+            - generic [ref=e593]: "10"
+            - generic [ref=e594]: Upcoming
+          - generic [ref=e600]:
+            - generic [ref=e601]: "0"
+            - generic [ref=e602]: Completed
+        - generic [ref=e603]:
+          - textbox "Search by title or trainer..." [ref=e608]
+          - generic [ref=e609]:
+            - button "All 10" [ref=e610] [cursor=pointer]:
+              - text: All
+              - generic [ref=e611]: "10"
+            - button "Active" [ref=e612] [cursor=pointer]
+            - button "Upcoming 10" [ref=e613] [cursor=pointer]:
+              - text: Upcoming
+              - generic [ref=e614]: "10"
+            - button "Completed" [ref=e615] [cursor=pointer]
+        - generic [ref=e616]:
+          - table [ref=e617]:
+            - rowgroup [ref=e618]:
+              - row [ref=e619]:
+                - columnheader [ref=e620]:
+                  - checkbox "Select all trainings on this page" [ref=e621] [cursor=pointer]
+                - columnheader "Title" [ref=e622]
+                - columnheader "Trainer" [ref=e623]
+                - columnheader "Start Date" [ref=e624]
+                - columnheader "End Date" [ref=e625]
+                - columnheader "Capacity" [ref=e626]
+                - columnheader "Enrolled" [ref=e627]
+                - columnheader "Status" [ref=e628]
+                - columnheader "Actions" [ref=e629]
+            - rowgroup [ref=e630]:
+              - row [ref=e631]:
+                - cell [ref=e632]:
+                  - checkbox "Select training Node.js Fundamentals 1789041007595" [ref=e633] [cursor=pointer]
+                - cell "Node.js Fundamentals 1789041007595" [ref=e634]
+                - cell "trainer01" [ref=e636]
+                - cell "30 Apr 2027" [ref=e638]
+                - cell "05 May 2027" [ref=e639]
+                - cell "25" [ref=e640]
+                - cell "0" [ref=e641]
+                - cell "UPCOMING" [ref=e642]
+                - cell [ref=e644]:
+                  - generic [ref=e645]:
+                    - button "View Details" [ref=e646] [cursor=pointer]
+                    - button "Edit Training" [ref=e650] [cursor=pointer]
+                    - button "Leaderboard" [ref=e654] [cursor=pointer]
+                    - button "Delete Training" [ref=e661] [cursor=pointer]
+              - row [ref=e665]:
+                - cell [ref=e666]:
+                  - checkbox "Select training Node.js Fundamentals 1789040988125" [ref=e667] [cursor=pointer]
+                - cell "Node.js Fundamentals 1789040988125" [ref=e668]
+                - cell "trainer01" [ref=e670]
+                - cell "27 Jan 2027" [ref=e672]
+                - cell "31 Jan 2027" [ref=e673]
+                - cell "25" [ref=e674]
+                - cell "0" [ref=e675]
+                - cell "UPCOMING" [ref=e676]
+                - cell [ref=e678]:
+                  - generic [ref=e679]:
+                    - button "View Details" [ref=e680] [cursor=pointer]
+                    - button "Edit Training" [ref=e684] [cursor=pointer]
+                    - button "Leaderboard" [ref=e688] [cursor=pointer]
+                    - button "Delete Training" [ref=e695] [cursor=pointer]
+              - row [ref=e699]:
+                - cell [ref=e700]:
+                  - checkbox "Select training Node.js Fundamentals" [ref=e701] [cursor=pointer]
+                - cell "Node.js Fundamentals" [ref=e702]
+                - cell "trainer01" [ref=e704]
+                - cell "03 May 2027" [ref=e706]
+                - cell "08 May 2027" [ref=e707]
+                - cell "25" [ref=e708]
+                - cell "0" [ref=e709]
+                - cell "UPCOMING" [ref=e710]
+                - cell [ref=e712]:
+                  - generic [ref=e713]:
+                    - button "View Details" [ref=e714] [cursor=pointer]
+                    - button "Edit Training" [ref=e718] [cursor=pointer]
+                    - button "Leaderboard" [ref=e722] [cursor=pointer]
+                    - button "Delete Training" [ref=e729] [cursor=pointer]
+              - row [ref=e733]:
+                - cell [ref=e734]:
+                  - 'checkbox "Select training Data Science Bootcamp - Batch #7!!" [ref=e735] [cursor=pointer]'
+                - 'cell "Data Science Bootcamp - Batch #7!!" [ref=e736]'
+                - cell "trainer01" [ref=e738]
+                - cell "14 Mar 2027" [ref=e740]
+                - cell "20 Mar 2027" [ref=e741]
+                - cell "40" [ref=e742]
+                - cell "0" [ref=e743]
+                - cell "UPCOMING" [ref=e744]
+                - cell [ref=e746]:
+                  - generic [ref=e747]:
+                    - button "View Details" [ref=e748] [cursor=pointer]
+                    - button "Edit Training" [ref=e752] [cursor=pointer]
+                    - button "Leaderboard" [ref=e756] [cursor=pointer]
+                    - button "Delete Training" [ref=e763] [cursor=pointer]
+              - row [ref=e767]:
+                - cell [ref=e768]:
+                  - 'checkbox "Select training Data Science Bootcamp - Batch #7!!" [ref=e769] [cursor=pointer]'
+                - 'cell "Data Science Bootcamp - Batch #7!!" [ref=e770]'
+                - cell "trainer01" [ref=e772]
+                - cell "20 Oct 2026" [ref=e774]
+                - cell "26 Oct 2026" [ref=e775]
+                - cell "40" [ref=e776]
+                - cell "0" [ref=e777]
+                - cell "UPCOMING" [ref=e778]
+                - cell [ref=e780]:
+                  - generic [ref=e781]:
+                    - button "View Details" [ref=e782] [cursor=pointer]
+                    - button "Edit Training" [ref=e786] [cursor=pointer]
+                    - button "Leaderboard" [ref=e790] [cursor=pointer]
+                    - button "Delete Training" [ref=e797] [cursor=pointer]
+              - row [ref=e801]:
+                - cell [ref=e802]:
+                  - checkbox "Select training Node.js Fundamentals" [ref=e803] [cursor=pointer]
+                - cell "Node.js Fundamentals" [ref=e804]
+                - cell "trainer01" [ref=e806]
+                - cell "20 Feb 2027" [ref=e808]
+                - cell "23 Feb 2027" [ref=e809]
+                - cell "25" [ref=e810]
+                - cell "0" [ref=e811]
+                - cell "UPCOMING" [ref=e812]
+                - cell [ref=e814]:
+                  - generic [ref=e815]:
+                    - button "View Details" [ref=e816] [cursor=pointer]
+                    - button "Edit Training" [ref=e820] [cursor=pointer]
+                    - button "Leaderboard" [ref=e824] [cursor=pointer]
+                    - button "Delete Training" [ref=e831] [cursor=pointer]
+              - row [ref=e835]:
+                - cell [ref=e836]:
+                  - 'checkbox "Select training Data Science Bootcamp - Batch #7!!" [ref=e837] [cursor=pointer]'
+                - 'cell "Data Science Bootcamp - Batch #7!!" [ref=e838]'
+                - cell "trainer01" [ref=e840]
+                - cell "28 Jan 2027" [ref=e842]
+                - cell "02 Feb 2027" [ref=e843]
+                - cell "40" [ref=e844]
+                - cell "0" [ref=e845]
+                - cell "UPCOMING" [ref=e846]
+                - cell [ref=e848]:
+                  - generic [ref=e849]:
+                    - button "View Details" [ref=e850] [cursor=pointer]
+                    - button "Edit Training" [ref=e854] [cursor=pointer]
+                    - button "Leaderboard" [ref=e858] [cursor=pointer]
+                    - button "Delete Training" [ref=e865] [cursor=pointer]
+              - row [ref=e869]:
+                - cell [ref=e870]:
+                  - checkbox "Select training A" [ref=e871] [cursor=pointer]
+                - cell "A" [ref=e872]
+                - cell "trainer01" [ref=e874]
+                - cell "18 Jul 2027" [ref=e876]
+                - cell "22 Jul 2027" [ref=e877]
+                - cell "10" [ref=e878]
+                - cell "0" [ref=e879]
+                - cell "UPCOMING" [ref=e880]
+                - cell [ref=e882]:
+                  - generic [ref=e883]:
+                    - button "View Details" [ref=e884] [cursor=pointer]
+                    - button "Edit Training" [ref=e888] [cursor=pointer]
+                    - button "Leaderboard" [ref=e892] [cursor=pointer]
+                    - button "Delete Training" [active] [ref=e899] [cursor=pointer]
+              - row [ref=e903]:
+                - cell [ref=e904]:
+                  - checkbox "Select training Node.js Fundamentals" [ref=e905] [cursor=pointer]
+                - cell "Node.js Fundamentals" [ref=e906]
+                - cell "trainer01" [ref=e908]
+                - cell "23 May 2027" [ref=e910]
+                - cell "27 May 2027" [ref=e911]
+                - cell "25" [ref=e912]
+                - cell "0" [ref=e913]
+                - cell "UPCOMING" [ref=e914]
+                - cell [ref=e916]:
+                  - generic [ref=e917]:
+                    - button "View Details" [ref=e918] [cursor=pointer]
+                    - button "Edit Training" [ref=e922] [cursor=pointer]
+                    - button "Leaderboard" [ref=e926] [cursor=pointer]
+                    - button "Delete Training" [ref=e933] [cursor=pointer]
+              - row [ref=e937]:
+                - cell [ref=e938]:
+                  - checkbox "Select training A" [ref=e939] [cursor=pointer]
+                - cell "A" [ref=e940]
+                - cell "trainer01" [ref=e942]
+                - cell "28 Dec 2026" [ref=e944]
+                - cell "31 Dec 2026" [ref=e945]
+                - cell "10" [ref=e946]
+                - cell "0" [ref=e947]
+                - cell "UPCOMING" [ref=e948]
+                - cell [ref=e950]:
+                  - generic [ref=e951]:
+                    - button "View Details" [ref=e952] [cursor=pointer]
+                    - button "Edit Training" [ref=e956] [cursor=pointer]
+                    - button "Leaderboard" [ref=e960] [cursor=pointer]
+                    - button "Delete Training" [ref=e967] [cursor=pointer]
+          - generic [ref=e971]:
+            - generic [ref=e972]:
+              - generic [ref=e973]:
+                - text: Showing
+                - strong [ref=e974]: "1"
+                - text: –
+                - strong [ref=e975]: "10"
+                - text: of
+                - strong [ref=e976]: "83"
+                - text: records
+              - generic [ref=e977]:
+                - generic [ref=e978]: "Rows per page:"
+                - combobox "Rows per page:" [ref=e979] [cursor=pointer]:
+                  - option "10" [selected]
+                  - option "25"
+                  - option "50"
+                  - option "100"
+            - generic [ref=e980]:
+              - button "First Page" [disabled] [ref=e981]
+              - button "Previous Page" [disabled] [ref=e985]
+              - button "1" [disabled] [ref=e988]
+              - button "2" [ref=e989] [cursor=pointer]
+              - generic [ref=e990]: …
+              - button "9" [ref=e991] [cursor=pointer]
+              - button "Next Page" [ref=e992] [cursor=pointer]
+              - button "Last Page" [ref=e995] [cursor=pointer]
+      - generic [ref=e1086]:
+        - generic [ref=e1087]:
+          - heading "Delete training \"A\"?" [level=3] [ref=e1088]
+          - button [ref=e1089] [cursor=pointer]
+        - paragraph [ref=e1094]: This will remove all associated enrollments and feedback.
+        - generic [ref=e1095]:
+          - button "Cancel" [ref=e1096] [cursor=pointer]
+          - button "Confirm" [ref=e1097] [cursor=pointer]

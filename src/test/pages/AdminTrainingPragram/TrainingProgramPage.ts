@@ -8,6 +8,14 @@ export type TrainingProgramStatus =
     | "Completed"
     | "All";
 
+export interface TrainingProgramRowData {
+    title: string;
+    trainer: string;
+    startDate: string;
+    endDate: string;
+    capacity: string;
+}
+
 export class TrainingProgramPage extends BasePage {
 
     private trainingProgramMenu = this.page.getByText(
@@ -25,6 +33,48 @@ export class TrainingProgramPage extends BasePage {
     private trainingProgramRows = this.page.locator("tbody tr");
 
     private searchInput = this.page.getByRole("textbox", { name: "Search by title or trainer..." });
+
+    private editTitleInput = this.page.locator(
+    '.reg-modal input.reg-input[type="text"][required]'
+);
+
+    private editDescriptionInput = this.page.locator(
+    '.reg-modal textarea.reg-input'
+);
+
+    private editDateTimeInputs = this.page.locator('input[type="datetime-local"]');
+
+    private editCapacityInput = this.page.getByRole("spinbutton", {
+        name: "e.g. 30"
+    });
+
+    private saveChangesButton = this.page.getByRole("button", {
+        name: "Save Changes"
+    });
+
+    private updateError = this.page.getByText(
+        "Server error updating training",
+        { exact: true }
+    );
+
+    private deleteConfirmation = this.page.getByText(
+        /Delete training .*\?/,
+        { exact: false }
+    );
+
+    private deleteWarning = this.page.getByText(
+        "This will remove all associated enrollments and feedback.",
+        { exact: true }
+    );
+
+    private deleteConfirmButton = this.page.getByRole("button", {
+        name: "Confirm"
+    });
+
+    private deleteSuccess = this.page.getByText(
+        "Training deleted successfully",
+        { exact: true }
+    );
 
     async navigateToTrainingProgram(): Promise<void> {
 
@@ -340,11 +390,146 @@ private async waitForExpectedStatus(
     async searchTrainingProgram(query: string): Promise<void> {
         logger.info(`Searching training programs for "${query}"`);
         await this.fill(this.searchInput, query);
-        await this.page.waitForTimeout(500);
+        await expect.poll(
+            async () => this.getRowsByTitle(query).count(),
+            { timeout: 10000 }
+        ).toBeGreaterThan(0);
     }
 
     private getRowsByTitle(title: string): Locator {
         return this.trainingProgramRows.filter({ hasText: title });
+    }
+
+    private getRow(data: TrainingProgramRowData): Locator {
+    return this.trainingProgramRows.filter({
+        hasText: data.title
+    });
+}
+
+    async expectProgramRowVisible(data: TrainingProgramRowData): Promise<void> {
+    logger.info(`Looking for training program: "${data.title}"`);
+
+    const row = this.getRow(data);
+
+    logger.info(`Matching rows found: ${await row.count()}`);
+
+    await expect(row).toHaveCount(1, { timeout: 15000 });
+
+    logger.info(`Training program row found: "${data.title}"`);
+}
+
+    async openEditTraining(data: TrainingProgramRowData): Promise<void> {
+        const row = this.getRow(data);
+        await expect(row).toHaveCount(1, { timeout: 15000 });
+        await row.getByRole("button", { name: "Edit Training" }).click();
+        await expect(this.saveChangesButton).toBeVisible({ timeout: 10000 });
+    }
+
+   async getEditFormValues(): Promise<{
+    title: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+    capacity: string;
+}> {
+    logger.info("EDIT FORM: Reading title");
+    const title = await this.editTitleInput.inputValue();
+
+    logger.info(`EDIT FORM: Title = "${title}"`);
+
+    logger.info("EDIT FORM: Reading description");
+    const description = await this.editDescriptionInput.inputValue();
+
+    logger.info(`EDIT FORM: Description = "${description}"`);
+
+    logger.info("EDIT FORM: Reading datetime inputs");
+
+    const dateTimeCount = await this.editDateTimeInputs.count();
+
+    logger.info(`EDIT FORM: datetime-local inputs found = ${dateTimeCount}`);
+
+    const startDate = await this.editDateTimeInputs.nth(0).inputValue();
+
+    logger.info(`EDIT FORM: Start date = "${startDate}"`);
+
+    const endDate = await this.editDateTimeInputs.nth(1).inputValue();
+
+    logger.info(`EDIT FORM: End date = "${endDate}"`);
+
+    logger.info("EDIT FORM: Reading capacity");
+
+    const capacity = await this.editCapacityInput.inputValue();
+
+    logger.info(`EDIT FORM: Capacity = "${capacity}"`);
+
+    return {
+        title,
+        description,
+        startDate,
+        endDate,
+        capacity
+    };
+}
+
+    async fillEditTraining(values: {
+        title?: string;
+        description?: string;
+        startDate?: string;
+        endDate?: string;
+        capacity?: string;
+    }): Promise<void> {
+        if (values.title !== undefined) {
+            await this.editTitleInput.fill(values.title);
+        }
+        if (values.description !== undefined) {
+            await this.editDescriptionInput.fill(values.description);
+        }
+        if (values.startDate !== undefined) {
+            await this.editDateTimeInputs.nth(0).fill(values.startDate);
+        }
+        if (values.endDate !== undefined) {
+            await this.editDateTimeInputs.nth(1).fill(values.endDate);
+        }
+        if (values.capacity !== undefined) {
+            await this.editCapacityInput.fill(values.capacity);
+        }
+    }
+
+    async saveEditedTraining(): Promise<void> {
+        await this.saveChangesButton.click();
+    }
+
+    async expectEditUpdateError(): Promise<void> {
+        await expect(this.updateError).toBeVisible({ timeout: 15000 });
+        await expect(this.saveChangesButton).toBeVisible();
+    }
+
+    async getTitleValidationMessage(): Promise<string> {
+        return this.editTitleInput.evaluate(
+            element => (element as HTMLInputElement).validationMessage
+        );
+    }
+
+    async openDeleteConfirmation(data: TrainingProgramRowData): Promise<void> {
+        const row = this.getRow(data);
+        await expect(row).toHaveCount(1, { timeout: 15000 });
+        await row.getByRole("button", { name: "Delete Training" }).click();
+        await expect(this.deleteConfirmation).toBeVisible({ timeout: 10000 });
+        await expect(this.deleteWarning).toBeVisible();
+    }
+
+    async cancelDelete(): Promise<void> {
+        await this.page.getByRole("button", { name: "Cancel" }).last().click();
+        await expect(this.deleteConfirmation).toBeHidden();
+    }
+
+    async confirmDelete(): Promise<void> {
+        await this.deleteConfirmButton.click();
+        await expect(this.deleteSuccess).toBeVisible({ timeout: 15000 });
+    }
+
+    async expectProgramRowAbsent(data: TrainingProgramRowData): Promise<void> {
+        await expect(this.getRow(data)).toHaveCount(0, { timeout: 15000 });
     }
 
     async getRowCountByTitle(title: string): Promise<number> {

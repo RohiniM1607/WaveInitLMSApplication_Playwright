@@ -16,7 +16,6 @@ import { LessonsPage } from '../../test/pages/Lessons/LessonsPage';
 import { MyProfilePage } from '../pages/MyProfilePage';
 import { DeleteConfirmationPage } from '../pages/Coding/DeleteConfirmationPage';
 import { LearnerMyCoursesPage } from '../pages/LearnerMyCourse/LearnerMycousePage';
-import { analyzePlaywrightFailure } from '../../main/utils/ollamaClient';
 import { mkdir, writeFile, readFile } from "fs/promises";
 import { TrainingProgramPage } from '../../test/pages/AdminTrainingPragram/TrainingProgramPage';
 import { AddTrainingProgramPage } from '../../test/pages/AdminTrainingPragram/AddTrainingProgramPage';
@@ -143,140 +142,33 @@ Error: ${String(error)}
 }
 
 After(async function (this: CustomWorld, scenario) {
-
     try {
         if (scenario.result?.status === "FAILED") {
-
-            const scenarioName =
-                scenario.pickle.name;
-
+            const scenarioName = scenario.pickle.name;
             const failureMessage =
-                scenario.result.message ||
-                "No failure message available.";
+                scenario.result.message || "No failure message available.";
 
-
-            logger.error(
-                `Scenario failed: ${scenarioName}`
-            );
-
-            logger.error(
-                `Failure message: ${failureMessage}`
-            );
+            logger.error(`Scenario failed: ${scenarioName}`);
+            logger.error(`Failure message: ${failureMessage}`);
 
             try {
+                const screenshot = await this.page.screenshot({
+                    fullPage: true
+                });
 
-                const screenshot =
-                    await this.page.screenshot({
-                        fullPage: true
-                    });
-
-                this.attach(
-                    screenshot,
-                    "image/png"
-                );
-
+                this.attach(screenshot, "image/png");
             } catch (screenshotError) {
-
                 logger.error(
                     `Screenshot failed: ${String(screenshotError)}`
                 );
             }
-            let currentUrl = "";
-            let pageTitle = "";
-
-            try {
-                currentUrl = this.page.url();
-                pageTitle = await this.page.title();
-            } catch {
-                currentUrl = "Unable to read URL";
-                pageTitle = "Unable to read page title";
-            }
-            
-            try {
-    const sourceLocation = extractSourceLocation(failureMessage);
-    let sourceCode = "Exact source code could not be identified.";
-    if (sourceLocation) {
-        logger.info(
-            `Failure source detected: ${sourceLocation.filePath}:${sourceLocation.line}:${sourceLocation.column}`
-        );
-        sourceCode =
-            await getSourceCodeAroundFailure(
-                sourceLocation.filePath,
-                sourceLocation.line
-            );
-    }
-    logger.info("Sending failure information to Ollama...");
-    const analysis =
-        await analyzePlaywrightFailure(
-            scenarioName,
-            failureMessage,
-            `
-CURRENT URL:
-${currentUrl}
-
-PAGE TITLE:
-${pageTitle}
-
-SCENARIO:
-${scenarioName}
-
-FAILURE:
-${failureMessage}
-
-FAILURE SOURCE:
-${sourceLocation
-    ? `${sourceLocation.filePath}:${sourceLocation.line}:${sourceLocation.column}`
-    : "Not identified"}
-
-ACTUAL SOURCE CODE AROUND FAILURE:
-${sourceCode}
-`
-        );
-//terminal output
-
-                console.log("");
-                console.log("======================================================")
-                console.log("OLLAMA AI FAILURE ANALYSIS");
-                console.log("======================================================")
-                console.log(analysis);
-                console.log("======================================================")
-                console.log("");
-//report
-              const analysisDirectory = "reports/ollama-analysis";
-
-await mkdir(analysisDirectory, { recursive: true });
-
-const safeScenarioName = scenario.pickle.name
-    .replace(/[^a-zA-Z0-9-_]/g, "_")
-    .substring(0, 100);
-
-const analysisPath =
-    `${analysisDirectory}/${safeScenarioName}_${Date.now()}.txt`;
-
-await writeFile(analysisPath, analysis, "utf-8");
-
-logger.info(`Ollama analysis saved to: ${analysisPath}`);
-
-            } catch (ollamaError) {
-                logger.error(
-                    `Ollama analysis failed: ${String(ollamaError)}`
-                );
-
-                console.log(
-                    "Ollama analysis could not be completed."
-                );
-            }
         }
-
     } catch (error) {
-
         logger.error(
-            `Error during failure analysis: ${String(error)}`
+            `Error during failure handling: ${String(error)}`
         );
-
     } finally {
         try {
-
             if (this.page) {
                 await this.page.close();
             }
@@ -284,9 +176,7 @@ logger.info(`Ollama analysis saved to: ${analysisPath}`);
             if (this.context) {
                 await this.context.close();
             }
-
         } catch (cleanupError) {
-
             logger.error(
                 `Cleanup failed: ${String(cleanupError)}`
             );
