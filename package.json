@@ -1,8 +1,5 @@
 {
   "dependencies": {
-    "@modelcontextprotocol/client": "^2.0.0",
-    "@modelcontextprotocol/server": "^2.0.0",
-    "axios": "^1.20.0",
     "csv-parse": "^7.0.2",
     "dotenv": "^17.4.2",
     "playwright": "^1.61.1",
@@ -23,7 +20,7 @@
   },
   "scripts": {
     "test": "cucumber-js",
-    "tag": "cucumber-js --tags @editpersonalinfo",
+    "tag": "cucumber-js --tags @resumemanagement",
     "posttest": "npx ts-node src/main/utils/report.mts",
     "sowndariya": "cucumber-js  --tags @sowndariya",
     "Samiha": "cucumber-js --tags @Samiha",
@@ -31,8 +28,6 @@
     "Rohini": "cucumber-js  --tags @Rohini",
     "bala": "cucumber-js  --tags @bala",
     "parallel": "cucumber-js  --parallel 2",
-    "test:failed": "cucumber-js -p rerun rerun/@rerun.txt",
-    "ai": "ts-node src/main/utils/AIConsole.ts",
-    "mcp:agent": "ts-node src/agent/AgentConsole.ts"
+    "test:failed": "cucumber-js -p rerun rerun/@rerun.txt"
   }
 }

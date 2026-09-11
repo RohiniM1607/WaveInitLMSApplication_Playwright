@@ -26,6 +26,17 @@ export class MyProfilePage extends BasePage {
     private savePersonalInfoButton = this.page.locator('//button[text() = "Save Changes"]');
     private cancelPersonalInfoButton = this.page.locator('//button[text() = "Cancel"]');
     private fullNameRequiredError = this.page.locator('//input[@placeholder = "Full Name"]/following-sibling::div[contains(text(), "Full name is required.")]');
+    private aboutMeLocator = this.page.locator('//div[text() = "About Me"]/following::div[1]');
+    private updateResumeButton = this.page.locator('//div[text() = "Resume"]/following::button[1]');
+    private deleteResumeButton = this.page.locator('//div[text() = "Resume"]/following::button[2]');
+    private downloadResumeButton = this.page.locator('//div[text() = "Resume"]/following::a');
+    private resumeFileName = this.page.locator('//div[text() = "Resume"]/following::div/div/div/div/div');
+    private uploadResumeInput = this.page.locator('//input[@type = "file"]');
+    private uploadResumeButton = this.page.locator('//button[text() = "Cancel"]/following-sibling::button');
+    private cancelResumeButton = this.page.locator('//button[text() = "Cancel"]');
+    private pdfReadyMessage = this.page.locator('//div[@class = "pfd-file-ready"]');
+    private deleteConfirmResumeButton = this.updateResumeButton;
+    private noFileUploadedMessage = this.page.locator('//div[text() = "No resume uploaded yet."]');
 
 
     async isProfileImageVisible(): Promise<boolean> {
@@ -167,6 +178,9 @@ export class MyProfilePage extends BasePage {
             value = await this.page.locator(locator).nth(1).nth(0).textContent() || '';
             value = value.split(' ')[0];
         }
+        else if(fieldName === "About Me") {
+            value = await this.aboutMeLocator.textContent() || '';
+        }
         else  {
             value = await this.page.locator(locator).textContent() || '';
         }
@@ -216,4 +230,72 @@ export class MyProfilePage extends BasePage {
 
         return personalDetails as PersonalInfo;
     }
+
+    async clickUpdateResumeButton() {
+        logger.info("Clicking on Update Resume button");
+        await this.click(this.updateResumeButton);
+    }
+
+    async clickDeleteResumeButton() {
+        logger.info("Clicking on Delete Resume button");
+        await this.click(this.deleteResumeButton);
+    }
+
+    async clickDownloadResumeButton() {
+        logger.info("Clicking on Download Resume button");
+        await this.click(this.downloadResumeButton);
+    }
+
+    async getResumeFileName(): Promise<string> {
+        logger.info("Getting resume file name");
+        const fileName = await this.resumeFileName.textContent() || '';
+        logger.info(`Resume file name: ${fileName}`);
+        return fileName;
+    }
+
+    async uploadResume(filePath: string) {
+        logger.info(`Uploading resume from file path: ${filePath}`);
+        await this.uploadResumeInput.setInputFiles(filePath);
+    }
+
+    async clickUploadResumeButton() {
+        logger.info("Clicking on Upload Resume button");
+        await this.click(this.uploadResumeButton);
+    }
+
+    async clickCancelResumeButton() {
+        logger.info("Clicking on Cancel Resume button");
+        await this.click(this.cancelResumeButton);
+    }
+
+    async isPdfReadyMessageVisible(): Promise<boolean> {
+        logger.info("Checking visibility of PDF ready message");
+        return await this.isVisible(this.pdfReadyMessage);
+    }
+
+    async isNoFileUploadedMessageVisible(): Promise<boolean> {
+        logger.info("Checking visibility of No File Uploaded message");
+        return await this.isVisible(this.noFileUploadedMessage);
+    }
+
+    async clickDeleteConfirmResumeButton() {
+        logger.info("Clicking on Delete Confirm Resume button");
+        await this.click(this.deleteConfirmResumeButton);
+    }
+
+    async isUpdateResumeButtonVisible(): Promise<boolean> {
+        logger.info("Checking visibility of Update Resume button");
+        return await this.isVisible(this.updateResumeButton);
+    }
+
+    async isDeleteResumeButtonVisible(): Promise<boolean> {
+        logger.info("Checking visibility of Delete Resume button");
+        return await this.isVisible(this.deleteResumeButton);
+    }
+
+    async isDownloadResumeButtonVisible(): Promise<boolean> {
+        logger.info("Checking visibility of Download Resume button");
+        return await this.isVisible(this.downloadResumeButton);
+    }
+
 }

@@ -1,4 +1,4 @@
-@vignesh @profile 
+@vignesh @profile @editpersonalinfo
 Feature: VIGNESHWARAN_M 04-09-2026 Edit Personal Information Feature
     As a user,
     I want to edit my personal information in my profile,
@@ -10,7 +10,7 @@ Feature: VIGNESHWARAN_M 04-09-2026 Edit Personal Information Feature
     And The user navigates to the profile page
     And The user clicks on the Edit button in the personal information section
 
-  @editpersonalinfo
+  
   Scenario: User successfully updates all editable personal information
     When the user updates the form with valid details
       | Full Name    | Vigneshwaran M              |
@@ -24,6 +24,7 @@ Feature: VIGNESHWARAN_M 04-09-2026 Edit Personal Information Feature
       | Phone Number | 9876543210                  |
       | Department   | Software Testing            |
       | Designation  | SDET                        |
+      | About Me     | Experienced software tester |
 
   Scenario: User successfully updates only the Full Name
     When the user updates the Full Name with "Vigneshwaran M"
