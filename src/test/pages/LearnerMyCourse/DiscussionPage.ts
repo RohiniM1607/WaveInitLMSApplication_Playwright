@@ -4,6 +4,8 @@ import { BasePage } from "../BasePage";
 
 export class DiscussionPage extends BasePage {
 
+    private pendingDeleteMessage = "";
+
     private myCoursesLink = this.page.getByText('My Courses', { exact: true }).first();
     private discussionsTabs = this.page.getByText('Discussions', { exact: true });
 
@@ -153,6 +155,7 @@ export class DiscussionPage extends BasePage {
     async clickDeleteIcon(message: string) {
         logger.info(`Clicking the delete icon for message: ${message}`);
         const card = this.getCard(message);
+        this.pendingDeleteMessage = message;
 
 
         const deleteIcon = card.locator('button.cdb-btn-icon--delete').first();
@@ -176,13 +179,30 @@ export class DiscussionPage extends BasePage {
 
     private getDeleteModalContainer(): Locator {
         const popupHeading = this.page.getByRole('heading', { name: 'Delete Post', exact: true });
-        return popupHeading.locator('xpath=ancestor::*[self::div][.//button][1]');
+        return this.page.getByRole('dialog').filter({ has: popupHeading }).first();
     }
 
     async confirmDeletePost() {
         logger.info("Confirming delete in the Delete Post popup");
-        const confirmButton = this.page.locator('span:has-text("Delete Post")').last();
+        const modal = this.getDeleteModalContainer();
+        const confirmButton = modal.getByRole('button', { name: 'Delete Post', exact: true });
         await this.click(confirmButton);
+
+        // Wait for the deletion to actually take effect before returning.
+        // Without this, the caller's next assertion (checking the post/reply
+        // is no longer visible) can run before the app has finished removing
+        // it from the DOM, causing a false "still visible" failure.
+        await this.page
+            .getByText('Post deleted successfully.', { exact: true })
+            .waitFor({ state: 'visible', timeout: 15000 })
+            .catch(() => {});
+
+        if (this.pendingDeleteMessage) {
+            await expect(
+                this.page.getByText(this.pendingDeleteMessage, { exact: true }).first()
+            ).toBeHidden({ timeout: 15000 });
+            this.pendingDeleteMessage = "";
+        }
     }
 
     async cancelDeletePost() {

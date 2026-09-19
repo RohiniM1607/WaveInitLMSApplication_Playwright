@@ -65,7 +65,7 @@ function generateSessionDates(): {
 
 When(
     "the admin creates a training session using test data {string}",
-    { timeout: 60 * 1000 },
+    { timeout: 65 * 1000 },
     async function (
         this: CustomWorld,
         testCaseId: string
@@ -105,6 +105,7 @@ Then(
 );
 When(
     "the admin attempts to create a training session using test data {string}",
+    { timeout: 65 * 1000 },
     async function (
         this: CustomWorld,
         testCaseId: string
@@ -154,6 +155,7 @@ Then(
 
 When(
     "the admin attempts to create a training session without selecting a trainer",
+    { timeout: 65 * 1000 },
     async function (this: CustomWorld) {
 
         const data = getTrainingDataById("TC01");
@@ -191,6 +193,7 @@ Then(
 
 When(
     "the admin attempts to create a training session without a title",
+    { timeout: 65 * 1000 },
     async function (this: CustomWorld) {
 
         const data = getTrainingDataById("TC01");
@@ -230,6 +233,7 @@ Then(
 
 When(
     "the admin attempts to create a training session without a start date",
+    { timeout: 65 * 1000 },
     async function (this: CustomWorld) {
 
         const data = getTrainingDataById("TC01");

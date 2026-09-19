@@ -20,6 +20,11 @@ function getTarget(testCaseId: string): TrainingProgramRowData {
     return target;
 }
 
+function toDateInputValue(date: string): string {
+    const [month, day, year] = date.split("/");
+    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+}
+
 When("the admin opens the existing training program for editing", async function (this: CustomWorld) {
     const editTarget = getTarget("EDIT01");
 
@@ -38,8 +43,8 @@ Then("the existing training program values should be loaded", async function (th
     const editTarget = getTarget("EDIT01");
     const values = await this.trainingProgramPage.getEditFormValues();
     expect(values.title).toBe(editTarget.title);
-    expect(values.startDate).toContain(editTarget.startDate.split("T")[0]);
-expect(values.endDate).toContain(editTarget.endDate.split("T")[0]);
+    expect(values.startDate).toContain(toDateInputValue(editTarget.startDate));
+    expect(values.endDate).toContain(toDateInputValue(editTarget.endDate));
     expect(values.capacity).toBe(editTarget.capacity);
 });
 

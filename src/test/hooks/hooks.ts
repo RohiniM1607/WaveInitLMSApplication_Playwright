@@ -16,13 +16,12 @@ import { LessonsPage } from '../../test/pages/Lessons/LessonsPage';
 import { MyProfilePage } from '../pages/MyProfilePage';
 import { DeleteConfirmationPage } from '../pages/Coding/DeleteConfirmationPage';
 import { LearnerMyCoursesPage } from '../pages/LearnerMyCourse/LearnerMycousePage';
-import { mkdir, writeFile, readFile } from "fs/promises";
 import { TrainingProgramPage } from '../../test/pages/AdminTrainingPragram/TrainingProgramPage';
 import { AddTrainingProgramPage } from '../../test/pages/AdminTrainingPragram/AddTrainingProgramPage';
 
 let browser: Browser;
 setDefaultTimeout(30 * 1000);
-
+ 
 BeforeAll({ timeout: 30 * 1000 }, async () => {
     try {
         if (config.browser === "chromium") {
@@ -62,6 +61,57 @@ Before(async function (this: CustomWorld, scenario) {
     
     this.browser = browser;
     this.context = await this.browser.newContext();
+
+    // -----------------------------------------------------------------
+    // Auto-dismiss the "Cookie and Privacy Consent Preferences" dialog.
+    //
+    // This dialog renders on every page load and physically blocks
+    // clicks on buttons underneath it (Create Training Session, status
+    // filters, Edit/Delete actions, etc). It never disappears on its
+    // own, so no amount of extra timeout ever fixes it - only clicking
+    // "Accept All" does. This runs on every new document in every
+    // context, so it protects every page object / every feature, not
+    // just one page.
+    // -----------------------------------------------------------------
+    await this.context.addInitScript(() => {
+        const tryDismiss = (): boolean => {
+            const dialog = document.querySelector(
+                '[aria-label="Cookie and Privacy Consent Preferences"]'
+            );
+            if (!dialog) {
+                return false;
+            }
+
+            const buttons = Array.from(
+                dialog.querySelectorAll('button')
+            );
+
+            const acceptAll = buttons.find(
+                (b) => b.textContent?.trim() === 'Accept All'
+            );
+
+            if (acceptAll) {
+                (acceptAll as HTMLButtonElement).click();
+                return true;
+            }
+
+            return false;
+        };
+
+        if (!tryDismiss()) {
+            const observer = new MutationObserver(() => {
+                if (tryDismiss()) {
+                    observer.disconnect();
+                }
+            });
+
+            observer.observe(document.documentElement, {
+                childList: true,
+                subtree: true
+            });
+        }
+    });
+
     this.page = await this.context.newPage();
     this.loginPage = new LoginPage(this.page);
     this.dashboardPage = new DashboardPage(this.page);
@@ -82,93 +132,55 @@ Before(async function (this: CustomWorld, scenario) {
     this.addTrainingProgramPage = new AddTrainingProgramPage(this.page);
 });
 
-
-function extractSourceLocation(
-    failureMessage: string
-): {
-    filePath: string;
-    line: number;
-    column: number;
-} | null {
-
-    const regex =
-        /([A-Za-z]:\\[^()\r\n]*?\.ts):(\d+):(\d+)/g;
-
-    const matches =
-        [...failureMessage.matchAll(regex)];
-
-    if (matches.length === 0) {
-        return null;
-    }
-
-    const userSource =
-        matches.find(
-            match =>
-                !match[1].includes("node_modules")
-        );
-
-    if (!userSource) {
-        return null;
-    }
-
-    return {
-        filePath: userSource[1],
-        line: Number(userSource[2]),
-        column: Number(userSource[3])
-    };
-}
-
-
-async function getSourceCodeAroundFailure(filePath: string,line: number): Promise<string> {
-    try {
-        const source = await readFile(filePath, "utf-8");
-        const lines = source.split(/\r?\n/);
-        const start = Math.max(0, line - 11);
-        const end = Math.min(lines.length, line + 10);
-        return lines
-            .slice(start, end)
-            .map(
-                (content, index) =>
-                    `${start + index + 1}: ${content}`
-            )
-            .join("\n");
-    } catch (error) {
-        return `
-Unable to read source file.
-File: ${filePath}
-Line: ${line}
-Error: ${String(error)}
-`;}
-}
-
 After(async function (this: CustomWorld, scenario) {
+
     try {
         if (scenario.result?.status === "FAILED") {
-            const scenarioName = scenario.pickle.name;
-            const failureMessage =
-                scenario.result.message || "No failure message available.";
 
-            logger.error(`Scenario failed: ${scenarioName}`);
-            logger.error(`Failure message: ${failureMessage}`);
+            const scenarioName =
+                scenario.pickle.name;
+
+            const failureMessage =
+                scenario.result.message ||
+                "No failure message available.";
+
+            logger.error(
+                `Scenario failed: ${scenarioName}`
+            );
+
+            logger.error(
+                `Failure message: ${failureMessage}`
+            );
 
             try {
-                const screenshot = await this.page.screenshot({
-                    fullPage: true
-                });
 
-                this.attach(screenshot, "image/png");
+                const screenshot =
+                    await this.page.screenshot({
+                        fullPage: true
+                    });
+
+                this.attach(
+                    screenshot,
+                    "image/png"
+                );
+
             } catch (screenshotError) {
+
                 logger.error(
                     `Screenshot failed: ${String(screenshotError)}`
                 );
             }
         }
+
     } catch (error) {
+
         logger.error(
-            `Error during failure handling: ${String(error)}`
+            `Error during failure analysis: ${String(error)}`
         );
+
     } finally {
         try {
+
             if (this.page) {
                 await this.page.close();
             }
@@ -176,7 +188,9 @@ After(async function (this: CustomWorld, scenario) {
             if (this.context) {
                 await this.context.close();
             }
+
         } catch (cleanupError) {
+
             logger.error(
                 `Cleanup failed: ${String(cleanupError)}`
             );

@@ -52,7 +52,9 @@ export class LearnerMyCoursesPage extends BasePage {
      * Course table rows.
      */
     private courseRows =
-        this.coursesTable.locator("tbody tr");
+        this.coursesTable.locator("tbody tr").filter({
+            has: this.page.locator("a, button")
+        });
 
 
     /* =========================================================

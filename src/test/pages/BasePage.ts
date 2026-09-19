@@ -1,5 +1,6 @@
 import{Locator, Page} from "@playwright/test"
 import { config } from "../../main/config/config";
+import { logger } from "../../main/utils/logger";
 
 export class BasePage{
 
@@ -7,6 +8,40 @@ export class BasePage{
 
     async navigate() {
         await this.page.goto(config.baseUrl);
+    }
+    
+    async dismissCookieConsentIfPresent(): Promise<void> {
+        const consentDialog = this.page.getByRole('dialog', {
+            name: 'Cookie and Privacy Consent Preferences'
+        });
+
+        const isPresent = await consentDialog
+            .isVisible({ timeout: 3000 })
+            .catch(() => false);
+
+        if (!isPresent) {
+            return;
+        }
+
+        logger.info("Cookie consent dialog detected, dismissing it");
+
+        const acceptButton = consentDialog.getByRole('button', {
+            name: 'Accept All'
+        });
+
+        const acceptButtonVisible = await acceptButton
+            .isVisible({ timeout: 2000 })
+            .catch(() => false);
+
+        if (acceptButtonVisible) {
+            await acceptButton.click({ timeout: 5000 }).catch(() => {});
+        }
+
+        await consentDialog
+            .waitFor({ state: 'hidden', timeout: 5000 })
+            .catch(() => {});
+
+        logger.info("Cookie consent dialog dismissed");
     }
 
     async click(locator:Locator) {

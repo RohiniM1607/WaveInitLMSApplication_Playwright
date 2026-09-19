@@ -142,7 +142,7 @@ Then('the {string} reply message should not be visible below the posted message'
     if (!message) {
         throw new Error(`No reply message stored for key "${replyKey}"`);
     }
-    const isVisible = await this.discussionPage.isPostVisible(message, 5000);
+    const isVisible = await this.discussionPage.isPostVisible(message, 15000);
     expect(isVisible).toBe(false);
 });
 
@@ -180,6 +180,6 @@ Then('the posted message should not be visible under the {string} tab', STEP_TIM
     } else if (tabName === "Q&A") {
         await this.discussionPage.openQnaTab();
     }
-    const isVisible = await this.discussionPage.isPostVisible(this.lastPostedMessage, 5000);
+    const isVisible = await this.discussionPage.isPostVisible(this.lastPostedMessage, 15000);
     expect(isVisible).toBe(false);
 });
