@@ -2,18 +2,31 @@ import { When, Then } from "@cucumber/cucumber";
 import { expect } from "playwright/test";
 import { CustomWorld } from "../../main/support/CustomWorld";
 import quizData from "../../resources/data/quizDataset.json";
-
+import loginData from "../../resources/data/loginDataset.json";
+When(
+    'The user enters valid username and password for {string}',
+    async function (this: CustomWorld, datasetKey: string) {
+        const testData = loginData[datasetKey as keyof typeof loginData];
+        await this.loginPage.fillUsername(testData.username);
+        await this.loginPage.fillPassword(testData.password);
+    }
+);
+When(
+    'The trainer selects the course from the list',
+    async function (this: CustomWorld) {
+        await this.quizPage.selectFirstCourse();
+    }
+);
 When(
     'The trainer clicks on the {string} menu',
     async function (this: CustomWorld, menuName: string) {
         await this.quizPage.clickSidebarMenu(menuName);
     }
 );
-
 When(
-    'The trainer selects the course from the list',
-    async function (this: CustomWorld) {
-        await this.quizPage.selectFirstCourse();
+    'The trainer selects the course {string} from the list',
+    async function (this: CustomWorld, courseName: string) {
+        await this.quizPage.selectCourseByName(courseName);
     }
 );
 
@@ -51,8 +64,6 @@ When(
 
             const question = data.questions[i];
 
-            // First question already exists
-            // Additional questions need Add Question button
             if (i > 0) {
                 await this.quizPage.clickAddQuestion();
             }
@@ -82,6 +93,7 @@ Then(
         expect(quizRow.status).toBe(status);
     }
 );
+
 When(
     'The trainer deletes the quiz',
     async function (this: CustomWorld) {
@@ -102,5 +114,34 @@ Then(
             );
 
         expect(isPresent).toBe(false);
+    }
+);
+
+When(
+    'The trainer opens the question bank',
+    async function (this: CustomWorld) {
+        await this.quizPage.openQuestionBank();
+    }
+);
+
+When(
+    'The trainer searches the question bank for {string}',
+    async function (this: CustomWorld, keyword: string) {
+        await this.quizPage.searchQuestionBank(keyword);
+    }
+);
+
+Then(
+    'The search results should contain {string} from {string}',
+    async function (this: CustomWorld, questionText: string, sourceQuiz: string) {
+        const isPresent = await this.quizPage.isQuestionInResults(questionText, sourceQuiz);
+        expect(isPresent).toBe(true);
+    }
+);
+Then(
+    'The search results should show no questions found message',
+    async function (this: CustomWorld) {
+        const isDisplayed = await this.quizPage.isNoResultsMessageDisplayed();
+        expect(isDisplayed).toBe(true);
     }
 );

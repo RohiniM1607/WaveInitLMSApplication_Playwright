@@ -7,7 +7,7 @@ Feature: VIGNESHWARAN_M 27-08-2026 Social Link Feature
   Background: User is on the social link management page
     Given The user launches the application
     And the user logs in with "Trainer" role
-    And The user navigates to the social link management page
+    And The user navigates to the profile page
 
   @bug
   Scenario: User should be able to edit the social media link

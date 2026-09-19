@@ -1,7 +1,7 @@
 import {When, Then} from "@cucumber/cucumber";
-import { CustomWorld } from "../../main/support/CustomWorld";
+import { CustomWorld } from "../../../main/support/CustomWorld";
 import { expect } from "playwright/test";
-import { logger } from "../../main/utils/logger";
+import { logger } from "../../../main/utils/logger";
 
 
 let fileChooser: any;
